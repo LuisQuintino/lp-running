@@ -17,10 +17,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: flutter-actions/setup-flutter@v3.6
+      - uses: flutter-actions/setup-flutter@v3
+        with:
+          channel: stable
+          version: 3.24.3
       
-      - name: Compile Application
-        working-directory: ./lp-running.app
+      - name: Analyse Application
+        working-directory: lp-running.app
         run: |
           flutter pub get
-          flutter run -d chrome
+          flutter analyze
