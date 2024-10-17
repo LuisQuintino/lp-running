@@ -1,5 +1,3 @@
-// Service/coachService.js
-
 const Coach = require('../Model/coachModel');
 
 class CoachService {
