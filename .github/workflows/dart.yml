@@ -24,4 +24,5 @@ jobs:
       - name: Analyse Application
         working-directory: lp-running.app
         run: |
+          flutter pub get
           flutter analyze
