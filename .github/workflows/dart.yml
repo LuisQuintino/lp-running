@@ -26,4 +26,4 @@ jobs:
         working-directory: ./lp-running.app
         run: |
           flutter pub get
-          flutter run -d linux
+          flutter analyze
