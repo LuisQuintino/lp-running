@@ -22,5 +22,5 @@ jobs:
       - name: Compile Application
         working-directory: ./lp-running.app
         run: |
-          dart pub get
-          dart compile
+          flutter pub get
+          flutter run
