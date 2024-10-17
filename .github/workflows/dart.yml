@@ -23,4 +23,4 @@ jobs:
         working-directory: ./lp-running.app
         run: |
           flutter pub get
-          flutter run
+          flutter run -d all
