@@ -1,0 +1,29 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: flutter-actions/setup-flutter@v3
+        with:
+          channel: stable
+          version: 3.24.3
+      
+      - name: Analyse Application
+        working-directory: lp-running.app
+        run: |
+          flutter pub get
+          flutter analyze
