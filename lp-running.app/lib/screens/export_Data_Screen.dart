@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/base_screen.dart';
-
 class ExportDataScreen extends StatefulWidget {
   const ExportDataScreen({super.key});
 
@@ -34,7 +32,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
         ),
       );
     } else {
-      // Aqui você pode adicionar a lógica para exportar os dados selecionados
+      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('E-mail enviado com sucesso!'),
@@ -52,10 +50,21 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      currentIndex: 2, // Ajuste conforme necessário
-      pageTitle: 'Exportar Dados',
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[800],
+        title: const Text(
+          'Exportar Dados',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

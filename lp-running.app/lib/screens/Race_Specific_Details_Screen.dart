@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/base_screen.dart';
 
 class RaceSpecificDetailsScreen extends StatefulWidget {
   final String raceId;
@@ -42,10 +41,21 @@ class _RaceSpecificDetailsScreenState extends State<RaceSpecificDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      currentIndex: 2, // Ajuste conforme necessário
-      pageTitle: 'Race Details', // Define o título da AppBar através do BaseScreen
-      child: FutureBuilder<Map<String, dynamic>>(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[800],
+        title: const Text(
+          'Race Details',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: FutureBuilder<Map<String, dynamic>>(
         future: raceDetailsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

@@ -11,6 +11,7 @@ class CoachListScreen extends StatefulWidget {
 
 class _CoachListScreenState extends State<CoachListScreen> {
   late Future<List<Map<String, dynamic>>> coachesFuture;
+  final List<Map<String, dynamic>> _archivedCoaches = [];
 
   @override
   void initState() {
@@ -25,19 +26,22 @@ class _CoachListScreenState extends State<CoachListScreen> {
         'name': 'Coach 001',
         'email': 'coach001@example.com',
         'role': 'Admin',
-        'active': true
+        'active': true,
+        'archived': false,
       },
       {
         'name': 'Coach 002',
         'email': 'coach002@example.com',
         'role': 'Coach',
-        'active': false
+        'active': false,
+        'archived': false,
       },
       {
         'name': 'Master Ramires',
         'email': 'mastercoach@example.com',
         'role': 'Master',
-        'active': true
+        'active': true,
+        'archived': false,
       },
     ];
   }
@@ -73,11 +77,85 @@ class _CoachListScreenState extends State<CoachListScreen> {
     );
   }
 
+  void _archiveCoach(int index, List<Map<String, dynamic>> coaches) {
+    setState(() {
+      coaches[index]['active'] = false; 
+      _archivedCoaches.add(coaches[index]); 
+      coaches.removeAt(index); 
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Coach arquivado e desativado com sucesso!')),
+    );
+  }
+
+  void _unarchiveCoach(int index) {
+    setState(() {
+      final coach = _archivedCoaches[index];
+      coach['active'] = false; 
+     
+      coachesFuture = coachesFuture.then((coaches) => [
+            ...coaches,
+            coach,
+          ]);
+      _archivedCoaches.removeAt(index); 
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Coach desarquivado com sucesso!')));
+    Navigator.of(context).pop(); 
+  }
+
+  void _viewArchivedCoaches(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView.builder(
+          itemCount: _archivedCoaches.length,
+          itemBuilder: (context, index) {
+            final coach = _archivedCoaches[index];
+            return ListTile(
+              title: Text(coach['name']),
+              subtitle: Text('${coach['role']} - ${coach['email']}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Switch(
+                    value: coach['active'],
+                    onChanged: (bool value) {
+                      setState(() {
+                        _archivedCoaches[index]['active'] = value;
+                      });
+                    },
+                    activeColor: Colors.green,
+                    inactiveThumbColor: Colors.red,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.unarchive, color: Colors.blue),
+                    onPressed: () {
+                      _unarchiveCoach(index);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
       currentIndex: 2,
       pageTitle: 'Coaches',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.archive),
+          onPressed: () {
+            _viewArchivedCoaches(context);
+          },
+        ),
+      ],
       child: Stack(
         children: [
           FutureBuilder<List<Map<String, dynamic>>>(
@@ -113,57 +191,59 @@ class _CoachListScreenState extends State<CoachListScreen> {
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                coach['name'] ?? '',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    coach['name'] ?? '',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Email: ${coach['email'] ?? ''}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Tipo de Conta: ${coach['role'] ?? ''}',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.edit),
-                                onPressed: () => _editCoach(index, coaches),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Email: ${coach['email'] ?? ''}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Tipo de Conta: ${coach['role'] ?? ''}',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Permissão: ${coach['role'] ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                              Switch(
-                                value: coach['active'] ?? false,
-                                onChanged: (bool value) {
-                                  setState(() {
-                                    coach['active'] = value;
-                                  });
-                                },
-                                activeColor: Colors.green,
-                                inactiveThumbColor: Colors.red,
-                                inactiveTrackColor: Colors.red.withOpacity(0.3),
+                              Column(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit),
+                                    onPressed: () => _editCoach(index, coaches),
+                                  ),
+                                  Switch(
+                                    value: coach['active'] ?? false,
+                                    onChanged: (bool value) {
+                                      setState(() {
+                                        coach['active'] = value;
+                                      });
+                                    },
+                                    activeColor: Colors.green,
+                                    inactiveThumbColor: Colors.red,
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.archive, color: Colors.blue),
+                                    onPressed: () {
+                                      _archiveCoach(index, coaches);
+                                    },
+                                  ),
+                                ],
                               ),
                             ],
                           ),

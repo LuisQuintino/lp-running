@@ -3,8 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import '../widgets/base_screen.dart';
-
 class RegisterAthleteScreen extends StatefulWidget {
   final Function(String, String) onRegisterAthlete;
   final String? athleteName;
@@ -34,12 +32,19 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
   bool _isCpfValid = false;
   final bool _isCpfEditable = true;
   String? _selectedGender;
+  String? _selectedCoach;
   final List<String> _genders = [
     'Male',
     'Female',
     'Non-binary',
     'Prefer not to say',
     'Other'
+  ];
+
+  final List<String> _coaches = [
+    'Coach A',
+    'Coach B',
+    'Coach C'
   ];
 
   final MaskTextInputFormatter _dateFormatter =
@@ -106,10 +111,21 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      currentIndex: widget.currentIndex,
-      pageTitle: 'Register Athlete',
-      child: SingleChildScrollView(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[800],
+        title: const Text(
+          'Registro de Atleta',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,6 +202,23 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
               onChanged: (value) {
                 setState(() {
                   _selectedGender = value;
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              decoration: const InputDecoration(
+                labelText: 'Coaches',
+                border: OutlineInputBorder(),
+              ),
+              value: _selectedCoach,
+              items: _coaches
+                  .map((coach) => DropdownMenuItem(
+                      value: coach, child: Text(coach)))
+                  .toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCoach = value;
                 });
               },
             ),

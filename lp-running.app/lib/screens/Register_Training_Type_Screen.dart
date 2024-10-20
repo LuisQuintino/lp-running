@@ -1,9 +1,5 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-//import 'package:image_picker/image_picker.dart';
-//import 'dart:io';
-//import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-
-import '../widgets/base_screen.dart';
 
 class RegisterTrainingTypeScreen extends StatefulWidget {
   final Function(String, String, String) onRegisterTraining;
@@ -18,18 +14,10 @@ class RegisterTrainingTypeScreen extends StatefulWidget {
       _RegisterTrainingTypeScreenState();
 }
 
-class _RegisterTrainingTypeScreenState
-    extends State<RegisterTrainingTypeScreen> {
-  final TextEditingController _trainingTypeController =
-      TextEditingController();
-  final TextEditingController _averageDurationController =
-      TextEditingController();
-  final List<String> _difficultyLevels = [
-    'Basic',
-    'Medium',
-    'Advanced',
-    'Extreme'
-  ];
+class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen> {
+  final TextEditingController _trainingTypeController = TextEditingController();
+  final TextEditingController _averageDurationController = TextEditingController();
+  final List<String> _difficultyLevels = ['Basic', 'Medium', 'Advanced', 'Extreme'];
   String? _selectedDifficultyLevel;
 
   @override
@@ -37,6 +25,31 @@ class _RegisterTrainingTypeScreenState
     _trainingTypeController.dispose();
     _averageDurationController.dispose();
     super.dispose();
+  }
+
+
+  void _selectDuration(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext builder) {
+        return Container(
+          height: 250,
+          color: Colors.white,
+          child: CupertinoTimerPicker(
+            mode: CupertinoTimerPickerMode.hm, 
+            initialTimerDuration: const Duration(hours: 0, minutes: 0),
+            onTimerDurationChanged: (Duration newDuration) {
+              setState(() {
+                
+                String formattedDuration = "${newDuration.inHours.toString().padLeft(2, '0')}:"
+                    "${(newDuration.inMinutes % 60).toString().padLeft(2, '0')}";
+                _averageDurationController.text = formattedDuration;
+              });
+            },
+          ),
+        );
+      },
+    );
   }
 
   void _registerTrainingType() {
@@ -60,10 +73,21 @@ class _RegisterTrainingTypeScreenState
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      currentIndex: 2,
-      pageTitle: 'Register Training Type',
-      child: Padding(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[800],
+        title: const Text(
+          'Register Training Type',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,11 +119,16 @@ class _RegisterTrainingTypeScreenState
               },
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: _averageDurationController,
-              decoration: const InputDecoration(
-                labelText: 'Average Duration',
-                border: OutlineInputBorder(),
+            GestureDetector(
+              onTap: () => _selectDuration(context), 
+              child: AbsorbPointer(
+                child: TextField(
+                  controller: _averageDurationController,
+                  decoration: const InputDecoration(
+                    labelText: 'Average Duration (HH:MM)',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 24),
