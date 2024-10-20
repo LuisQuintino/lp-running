@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String activeCoach;
-  final String role;
-
-  const HomeScreen({
-    super.key,
-    required this.activeCoach,
-    required this.role,
-  });
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -27,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _navigateToScreen(String routeName) {
-    Navigator.pushNamed(context, routeName, arguments: {'role': widget.role});
+    Navigator.pushNamed(context, routeName);
   }
 
   Widget _buildDrawer() {
@@ -37,11 +30,11 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.grey[800],
+              color: const Color(0xFF424242), // Cor equivalente ao Colors.grey[800]
             ),
-            child: Text(
-              'Menu (${widget.role})',
-              style: const TextStyle(
+            child: const Text(
+              'Menu',
+              style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,
               ),
@@ -54,10 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => HomeScreen(
-                    activeCoach: widget.activeCoach,
-                    role: widget.role,
-                  ),
+                  builder: (context) => const HomeScreen(),
                 ),
               );
             },
@@ -83,15 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
               _navigateToScreen('/perfil');
             },
           ),
-         
-          if (widget.role == 'Master')
-            ListTile(
-              leading: const Icon(Icons.construction),
-              title: const Text('Coaches'),
-              onTap: () {
-                _navigateToScreen('/coaches');
-              },
-            ),
+          ListTile(
+            leading: const Icon(Icons.construction),
+            title: const Text('Coaches'),
+            onTap: () {
+              _navigateToScreen('/coaches');
+            },
+          ),
           ListTile(
             leading: const Icon(Icons.directions_run),
             title: const Text('Tipos de Treino'),
@@ -125,12 +113,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _buildImageCard('Tipos de Treino', 'lib/assets/images/training_types.png'),
           ),
           const SizedBox(height: 16),
-          
-          if (widget.role == 'Master')
-            GestureDetector(
-              onTap: () => _navigateToScreen('/coaches'),
-              child: _buildImageCard('Coaches', 'lib/assets/images/coaches.png'),
-            ),
+          GestureDetector(
+            onTap: () => _navigateToScreen('/coaches'),
+            child: _buildImageCard('Coaches', 'lib/assets/images/coaches.png'),
+          ),
         ],
       ),
     );
@@ -178,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.grey[800],
+        backgroundColor: const Color(0xFF424242), // Cor equivalente ao Colors.grey[800]
         title: Text(
-          '${_getGreeting()}, Coach ${widget.activeCoach}!',
+          _getGreeting(),
           style: const TextStyle(
             color: Colors.white,
           ),
@@ -192,4 +178,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-//*tela de com bug entre master e coach  por causa da role de master e coach 

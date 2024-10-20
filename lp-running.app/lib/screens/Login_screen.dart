@@ -10,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final bool _rememberPassword = false;
+  bool _rememberPassword = false; // Lembrar senha
 
   @override
   void dispose() {
@@ -24,14 +24,85 @@ class _LoginScreenState extends State<LoginScreen> {
     String password = _passwordController.text;
 
     if (email == 'master' && password == 'master') {
-      Navigator.of(context).pushReplacementNamed('/homeMaster');
-    } else if (email == 'coach' && password == 'coach') {
-      Navigator.of(context).pushReplacementNamed('/homeCoach');
+      Navigator.of(context).pushReplacementNamed('/home');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuário ou senha inválidos')),
       );
     }
+  }
+
+  void _forgotPassword() {
+    final TextEditingController _resetEmailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey[300],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: Colors.black, width: 2.0),
+          ),
+          title: const Text(
+            'Esqueci minha senha',
+            style: TextStyle(color: Colors.black),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Por favor, insira o seu e-mail para recuperar a senha:',
+                style: TextStyle(color: Colors.black),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: _resetEmailController,
+                decoration: InputDecoration(
+                  hintText: 'E-mail',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: const BorderSide(color: Colors.black, width: 2.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                String resetEmail = _resetEmailController.text;
+                if (resetEmail.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('E-mail enviado com sucesso!')),
+                  );
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Por favor, insira um e-mail válido.')),
+                  );
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildEmailField() {
@@ -85,6 +156,39 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildRememberMeAndForgotPassword() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Checkbox(
+              value: _rememberPassword,
+              activeColor: Colors.white,
+              checkColor: Colors.black,
+              onChanged: (bool? value) {
+                setState(() {
+                  _rememberPassword = value ?? false;
+                });
+              },
+            ),
+            const Text(
+              'Lembrar senha',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+        TextButton(
+          onPressed: _forgotPassword,
+          child: const Text(
+            'Esqueci minha senha',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildLoginButton() {
     return Container(
       decoration: BoxDecoration(
@@ -132,6 +236,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 _buildEmailField(),
                 const SizedBox(height: 20),
                 _buildPasswordField(),
+                const SizedBox(height: 10),
+                _buildRememberMeAndForgotPassword(),
                 const SizedBox(height: 20),
                 _buildLoginButton(),
               ],

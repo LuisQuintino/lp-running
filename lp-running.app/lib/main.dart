@@ -43,9 +43,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
-        '/homeMaster': (context) => const HomeScreen(activeCoach: 'Master', role: 'Master'),
-        '/homeCoach': (context) => const HomeScreen(activeCoach: 'Coach', role: 'Coach'),
-        '/home': (context) => const HomeScreen(activeCoach: 'User', role: 'General'),
+        '/home': (context) => const HomeScreen(),
         '/cronometro': (context) => const CronometroScreen(),
         '/atletas': (context) => const AthletesScreen(currentIndex: 2),
         '/perfil': (context) => const PerfilScreen(),
