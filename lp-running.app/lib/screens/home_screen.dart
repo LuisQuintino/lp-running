@@ -19,6 +19,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  
+
+  // buscar coach ativo
+  String _coachName = "Ache um Bug 😉";
+
+  // puxar banco de dados 
+  
+
   void _navigateToScreen(String routeName) {
     Navigator.pushNamed(context, routeName);
   }
@@ -30,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: <Widget>[
           DrawerHeader(
             decoration: BoxDecoration(
-              color: const Color(0xFF424242), // Cor equivalente ao Colors.grey[800]
+              color: const Color(0xFF424242), 
             ),
             child: const Text(
               'Menu',
@@ -164,9 +172,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF424242), // Cor equivalente ao Colors.grey[800]
+        backgroundColor: const Color(0xFF424242), 
         title: Text(
-          _getGreeting(),
+          '${_getGreeting()}, $_coachName', //  banco de dados
           style: const TextStyle(
             color: Colors.white,
           ),
