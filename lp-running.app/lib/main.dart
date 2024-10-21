@@ -7,6 +7,7 @@ import 'screens/coach_list_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/training_types_screen.dart';
+import 'screens/master_control_screen.dart'; 
 
 void main() {
   runApp(const MyApp());
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/perfil': (context) => const PerfilScreen(),
         '/coaches': (context) => const CoachListScreen(),
         '/training-types': (context) => const TrainingTypesScreen(),
+        '/master-control': (context) => const MasterControlScreen(), 
       },
     );
   }

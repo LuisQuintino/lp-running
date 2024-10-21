@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class BaseScreen extends StatefulWidget {
   final Widget child;
@@ -45,6 +45,9 @@ class _BaseScreenState extends State<BaseScreen> {
         break;
       case 5:
         route = '/training-types';
+        break;
+      case 6:  // Novo caso para Configurações
+        route = '/master-control';  // Direcionando para MasterControlScreen
         break;
       default:
         route = '/home';
@@ -96,7 +99,7 @@ class _BaseScreenState extends State<BaseScreen> {
         children: <Widget>[
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.grey, 
+              color: Colors.grey,
             ),
             child: Text(
               'Menu',
@@ -112,6 +115,7 @@ class _BaseScreenState extends State<BaseScreen> {
           _buildMenuOption(Icons.person, 'Perfil', 3),
           _buildMenuOption(Icons.construction, 'Coaches', 4),
           _buildMenuOption(Icons.directions_run, 'Tipos de Treino', 5),
+          _buildMenuOption(Icons.settings, 'Controle de Acesso', 6), 
         ],
       ),
     );
