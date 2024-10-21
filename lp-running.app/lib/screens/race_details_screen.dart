@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lp_runningflutter/screens/athlete_information_screen.dart';
 import 'package:lp_runningflutter/screens/race_specific_details_screen.dart';
-import '../widgets/base_screen.dart';
 
 class RaceDetailsScreen extends StatelessWidget {
   final String athleteName;
@@ -19,10 +18,21 @@ class RaceDetailsScreen extends StatelessWidget {
       {'id': '1', 'date': '22/09/2024', 'distance': '100 to 200 meters'},
     ];
 
-    return BaseScreen(
-      currentIndex: 2,
-      pageTitle: 'Race Details',
-      child: Padding(
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.grey[800],
+        title: const Text(
+          'Race Details',
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -38,7 +48,7 @@ class RaceDetailsScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Ajuste a cor conforme necessário
+                color: Colors.black, 
               ),
             ),
             const SizedBox(height: 16),
@@ -65,7 +75,7 @@ class RaceDetailsScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, // Ajuste a cor conforme necessário
+                color: Colors.black, 
               ),
             ),
             const SizedBox(height: 8),

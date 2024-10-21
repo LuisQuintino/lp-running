@@ -1,39 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/base_screen.dart';
-import 'athletes_screen.dart';
-import 'cronometro_screen.dart';
-import 'perfil_screen.dart';
-import 'training_types_screen.dart';
-
 class HomeScreen extends StatefulWidget {
-  final String activeCoach;
-  final String role;
-
-  const HomeScreen({
-    super.key,
-    required this.activeCoach,
-    required this.role,
-  });
+  const HomeScreen({super.key});
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _currentIndex = 0;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final int? index = ModalRoute.of(context)?.settings.arguments as int?;
-    if (index != null) {
-      setState(() {
-        _currentIndex = index;
-      });
-    }
-  }
-
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
@@ -45,13 +19,85 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  List<Widget> get _screens {
-    return [
-      _buildHomeContent(),
-      const CronometroScreen(),
-      const AthletesScreen(currentIndex: 2),
-      const PerfilScreen(),
-    ];
+  
+
+  // buscar coach ativo
+  String _coachName = "Ache um Bug 😉";
+
+  // puxar banco de dados 
+  
+
+  void _navigateToScreen(String routeName) {
+    Navigator.pushNamed(context, routeName);
+  }
+
+  Widget _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: const Color(0xFF424242), 
+            ),
+            child: const Text(
+              'Menu',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Home'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomeScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.timer),
+            title: const Text('Cronômetro'),
+            onTap: () {
+              _navigateToScreen('/cronometro');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.people),
+            title: const Text('Atletas'),
+            onTap: () {
+              _navigateToScreen('/atletas');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Perfil'),
+            onTap: () {
+              _navigateToScreen('/perfil');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.construction),
+            title: const Text('Coaches'),
+            onTap: () {
+              _navigateToScreen('/coaches');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.directions_run),
+            title: const Text('Tipos de Treino'),
+            onTap: () {
+              _navigateToScreen('/training-types');
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildHomeContent() {
@@ -59,113 +105,84 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildGreetingBar(),
           const SizedBox(height: 24),
           GestureDetector(
-            onTap: () => _navigateToIndex(1),
+            onTap: () => _navigateToScreen('/cronometro'),
             child: _buildImageCard('Cronômetro', 'lib/assets/images/stopwatch.png'),
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onTap: () => _navigateToIndex(2),
+            onTap: () => _navigateToScreen('/atletas'),
             child: _buildImageCard('Atletas', 'lib/assets/images/athletes.png'),
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onTap: _navigateToTrainingTypes,
+            onTap: () => _navigateToScreen('/training-types'),
             child: _buildImageCard('Tipos de Treino', 'lib/assets/images/training_types.png'),
           ),
           const SizedBox(height: 16),
-          if (widget.role == 'Master')
-            GestureDetector(
-              onTap: _navigateToCoaches,
-              child: _buildImageCard('Coaches', 'lib/assets/images/coaches.png'),
-            ),
+          GestureDetector(
+            onTap: () => _navigateToScreen('/coaches'),
+            child: _buildImageCard('Coaches', 'lib/assets/images/coaches.png'),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildGreetingBar() {
-    return Container(
-      width: double.infinity,
-      color: Colors.grey[800],
-      padding: const EdgeInsets.all(16.0),
-      child: Text(
-        '${_getGreeting()}, Coach ${widget.activeCoach}!',
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
   Widget _buildImageCard(String label, String imagePath) {
-    return Stack(
-      alignment: Alignment.bottomLeft,
-      children: [
-        Container(
-          width: double.infinity,
-          height: 120,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(imagePath),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Colors.black54,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          width: double.infinity,
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Stack(
+        alignment: Alignment.bottomLeft,
+        children: [
+          Container(
+            width: double.infinity,
+            height: 120,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(imagePath),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  void _navigateToIndex(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-
-  void _navigateToTrainingTypes() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const TrainingTypesScreen(),
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            width: double.infinity,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
       ),
     );
-  }
-
-  void _navigateToCoaches() {
-    Navigator.of(context).pushNamed('/coaches');
   }
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      currentIndex: _currentIndex,
-      pageTitle: null,
-      showBackButton: false,
-      child: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF424242), 
+        title: Text(
+          '${_getGreeting()}, $_coachName', //  banco de dados
+          style: const TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      drawer: _buildDrawer(),
+      body: _buildHomeContent(),
     );
   }
 }

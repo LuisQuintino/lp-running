@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class RegisterCoachScreen extends StatefulWidget {
@@ -6,11 +6,12 @@ class RegisterCoachScreen extends StatefulWidget {
   final Map<String, dynamic>? coach;
   final bool isEditing;
 
-  const RegisterCoachScreen(
-      {super.key,
-      required this.onRegister,
-      this.coach,
-      this.isEditing = false});
+  const RegisterCoachScreen({
+    super.key,
+    required this.onRegister,
+    this.coach,
+    this.isEditing = false,
+  });
 
   @override
   _RegisterCoachScreenState createState() => _RegisterCoachScreenState();
@@ -33,10 +34,8 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.coach?['name'] ?? '');
-    _emailController =
-        TextEditingController(text: widget.coach?['email'] ?? '');
-    _phoneController =
-        TextEditingController(text: widget.coach?['phone'] ?? '');
+    _emailController = TextEditingController(text: widget.coach?['email'] ?? '');
+    _phoneController = TextEditingController(text: widget.coach?['phone'] ?? '');
     _cpfController = TextEditingController(text: widget.coach?['cpf'] ?? '');
     _dobController = TextEditingController(text: widget.coach?['dob'] ?? '');
     _selectedRole = widget.coach?['role'];
@@ -128,28 +127,30 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
             children: [
               TextField(
                 controller: _nameController,
+                style: const TextStyle(color: Colors.black), 
                 decoration: const InputDecoration(
                   labelText: 'Nome',
-                  labelStyle: TextStyle(color: Colors.red),
+                  labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _emailController,
+                style: const TextStyle(color: Colors.black), 
                 decoration: const InputDecoration(
                   labelText: 'E-mail',
-                  labelStyle: TextStyle(color: Colors.red),
+                  labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -166,15 +167,16 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
               const SizedBox(height: 16),
               TextField(
                 controller: _cpfController,
+                style: const TextStyle(color: Colors.black), 
                 decoration: InputDecoration(
                   labelText: 'CPF',
-                  labelStyle: const TextStyle(color: Colors.red),
+                  labelStyle: const TextStyle(color: Colors.black),
                   hintText: '000.000.000-00',
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                   enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                   suffixIcon: _isCpfValid == null
                       ? null
@@ -193,15 +195,16 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
               const SizedBox(height: 16),
               TextField(
                 controller: _dobController,
+                style: const TextStyle(color: Colors.black), 
                 decoration: const InputDecoration(
-                  labelText: 'Data de Nascimento (opcional)',
+                  labelText: 'Data de Nascimento',
                   hintText: '00/00/0000',
-                  labelStyle: TextStyle(color: Colors.red),
+                  labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.red),
+                    borderSide: BorderSide(color: Colors.black), 
                   ),
                 ),
                 keyboardType: TextInputType.datetime,

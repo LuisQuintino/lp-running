@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+ import 'package:flutter/material.dart';
 
 class BaseScreen extends StatefulWidget {
   final Widget child;
@@ -24,6 +23,8 @@ class BaseScreen extends StatefulWidget {
 }
 
 class _BaseScreenState extends State<BaseScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   void _onItemTapped(int index) {
     String route;
     switch (index) {
@@ -39,6 +40,12 @@ class _BaseScreenState extends State<BaseScreen> {
       case 3:
         route = '/perfil';
         break;
+      case 4:
+        route = '/coaches';
+        break;
+      case 5:
+        route = '/training-types';
+        break;
       default:
         route = '/home';
     }
@@ -48,31 +55,18 @@ class _BaseScreenState extends State<BaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: widget.pageTitle != null
           ? AppBar(
               backgroundColor: Colors.grey[800],
               iconTheme: const IconThemeData(color: Colors.white),
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarIconBrightness: Brightness.light,
-              ),
               toolbarHeight: 56,
-              leading: widget.showBackButton
-                  ? IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        } else {
-                          Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            '/home',
-                            (route) => false,
-                          );
-                        }
-                      },
-                    )
-                  : null,
+              leading: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
               title: Text(
                 widget.pageTitle ?? '',
                 style: const TextStyle(color: Colors.white),
@@ -83,44 +77,53 @@ class _BaseScreenState extends State<BaseScreen> {
           : null,
       body: Row(
         children: [
-          Container(width: 10, color: Colors.grey[800]),
           Expanded(
             child: Container(
               color: Colors.grey[300],
               child: widget.child,
             ),
           ),
-          Container(width: 10, color: Colors.grey[800]),
         ],
       ),
-      bottomNavigationBar: widget.showBottomNavigationBar
-          ? BottomNavigationBar(
-              currentIndex: widget.currentIndex,
-              onTap: _onItemTapped,
-              selectedItemColor: Colors.red,
-              unselectedItemColor: Colors.black54,
-              backgroundColor: Colors.grey[400],
-              type: BottomNavigationBarType.fixed,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.timer),
-                  label: 'Cronômetro',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.people),
-                  label: 'Atletas',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Perfil',
-                ),
-              ],
-            )
-          : null,
+      drawer: _buildDrawerMenu(),
+    );
+  }
+
+  Widget _buildDrawerMenu() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Colors.grey, 
+            ),
+            child: Text(
+              'Menu',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
+            ),
+          ),
+          _buildMenuOption(Icons.home, 'Home', 0),
+          _buildMenuOption(Icons.timer, 'Cronômetro', 1),
+          _buildMenuOption(Icons.people, 'Atletas', 2),
+          _buildMenuOption(Icons.person, 'Perfil', 3),
+          _buildMenuOption(Icons.construction, 'Coaches', 4),
+          _buildMenuOption(Icons.directions_run, 'Tipos de Treino', 5),
+        ],
+      ),
+    );
+  }
+
+  ListTile _buildMenuOption(IconData icon, String title, int index) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      onTap: () {
+        _onItemTapped(index);
+      },
     );
   }
 }

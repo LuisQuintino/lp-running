@@ -12,7 +12,31 @@ class TrainingTypesScreen extends StatefulWidget {
 }
 
 class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
-  final List<Map<String, dynamic>> _activities = [];
+  final List<Map<String, dynamic>> _activities = [
+    {
+      'name': 'Treino Fácil',
+      'level': 'Básico',
+      'duration': '30 minutos',
+      'enabled': true,
+      'archived': false,
+    },
+    {
+      'name': 'Treino Intermediário',
+      'level': 'Médio',
+      'duration': '45 minutos',
+      'enabled': false,
+      'archived': false,
+    },
+    {
+      'name': 'Treino Avançado',
+      'level': 'Avançado',
+      'duration': '60 minutos',
+      'enabled': true,
+      'archived': false,
+    },
+  ];
+
+  final List<Map<String, dynamic>> _archivedActivities = [];
 
   void _addNewActivity(String name, String level, String duration) {
     setState(() {
@@ -21,8 +45,38 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
         'level': level,
         'duration': duration,
         'enabled': true,
+        'archived': false,
       });
     });
+  }
+
+  void _archiveActivity(int index) {
+    setState(() {
+      _activities[index]['enabled'] = false;
+      _archivedActivities.add(_activities[index]);
+      _activities.removeAt(index);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Treino arquivado com sucesso!'),
+      ),
+    );
+  }
+
+  void _unarchiveActivity(int index) {
+    setState(() {
+      Map<String, dynamic> unarchivedActivity = _archivedActivities[index];
+      unarchivedActivity['enabled'] = false;
+      unarchivedActivity['archived'] = false;
+      _activities.add(unarchivedActivity);
+      _archivedActivities.removeAt(index);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Treino desarquivado com sucesso!'),
+      ),
+    );
+    Navigator.of(context).pop();
   }
 
   void _navigateToRegisterActivity(BuildContext context) {
@@ -37,11 +91,58 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
     );
   }
 
+  void _viewArchivedActivities(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return ListView.builder(
+          itemCount: _archivedActivities.length,
+          itemBuilder: (context, index) {
+            final activity = _archivedActivities[index];
+            return ListTile(
+              title: Text(activity['name']),
+              subtitle: Text('${activity['level']} - ${activity['duration']}'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Switch(
+                    value: activity['enabled'],
+                    onChanged: (bool value) {
+                      setState(() {
+                        _archivedActivities[index]['enabled'] = value;
+                      });
+                    },
+                    activeColor: Colors.green,
+                    inactiveThumbColor: Colors.red,
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.unarchive, color: Colors.blue),
+                    onPressed: () {
+                      _unarchiveActivity(index);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
       currentIndex: widget.currentIndex,
       pageTitle: 'Training Types',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.archive),
+          onPressed: () {
+            _viewArchivedActivities(context);
+          },
+        ),
+      ],
       child: Stack(
         children: [
           Padding(
@@ -72,15 +173,26 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                               Text(activity['duration']),
                             ],
                           ),
-                          trailing: Switch(
-                            value: activity['enabled'],
-                            onChanged: (bool value) {
-                              setState(() {
-                                _activities[index]['enabled'] = value;
-                              });
-                            },
-                            activeColor: Theme.of(context).primaryColor,
-                            inactiveThumbColor: Colors.grey,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Switch(
+                                value: activity['enabled'],
+                                onChanged: (bool value) {
+                                  setState(() {
+                                    _activities[index]['enabled'] = value;
+                                  });
+                                },
+                                activeColor: Colors.green,
+                                inactiveThumbColor: Colors.red,
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.archive, color: Colors.blue),
+                                onPressed: () {
+                                  _archiveActivity(index);
+                                },
+                              ),
+                            ],
                           ),
                           leading: Icon(
                             Icons.edit,

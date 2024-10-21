@@ -6,6 +6,7 @@ import 'screens/perfil_screen.dart';
 import 'screens/coach_list_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/splash_screen.dart';
+import 'screens/training_types_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -42,11 +43,12 @@ class MyApp extends StatelessWidget {
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
-        '/home': (context) => const HomeScreen(activeCoach: 'Master', role: 'Master'),
+        '/home': (context) => const HomeScreen(),
         '/cronometro': (context) => const CronometroScreen(),
         '/atletas': (context) => const AthletesScreen(currentIndex: 2),
         '/perfil': (context) => const PerfilScreen(),
         '/coaches': (context) => const CoachListScreen(),
+        '/training-types': (context) => const TrainingTypesScreen(),
       },
     );
   }

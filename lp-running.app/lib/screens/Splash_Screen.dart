@@ -8,13 +8,29 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+  late AnimationController _animationController;
+
   @override
   void initState() {
     super.initState();
+
+    
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..forward(); 
+
+    
     Timer(const Duration(seconds: 5), () {
       Navigator.of(context).pushReplacementNamed('/login');
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -30,8 +46,21 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 300,
             ),
             const SizedBox(height: 50),
-            const CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+            
+            AnimatedBuilder(
+              animation: _animationController,
+              builder: (context, child) {
+                return Container(
+                  width: 200,
+                  height: 5,
+                  color: Colors.black,
+                  child: LinearProgressIndicator(
+                    value: _animationController.value,
+                    backgroundColor: Colors.black,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+                  ),
+                );
+              },
             ),
           ],
         ),
