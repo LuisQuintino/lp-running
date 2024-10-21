@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/base_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,86 +20,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  
-
-  // buscar coach ativo
-  String _coachName = "Ache um Bug 😉";
-
-  // puxar banco de dados 
-  
+  String _coachName = "Ache um Bug 😉"; 
 
   void _navigateToScreen(String routeName) {
     Navigator.pushNamed(context, routeName);
   }
 
-  Widget _buildDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: const Color(0xFF424242), 
-            ),
-            child: const Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomeScreen(),
-                ),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.timer),
-            title: const Text('Cronômetro'),
-            onTap: () {
-              _navigateToScreen('/cronometro');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.people),
-            title: const Text('Atletas'),
-            onTap: () {
-              _navigateToScreen('/atletas');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Perfil'),
-            onTap: () {
-              _navigateToScreen('/perfil');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.construction),
-            title: const Text('Coaches'),
-            onTap: () {
-              _navigateToScreen('/coaches');
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.directions_run),
-            title: const Text('Tipos de Treino'),
-            onTap: () {
-              _navigateToScreen('/training-types');
-            },
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildHomeContent() {
     return SingleChildScrollView(
@@ -170,19 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF424242), 
-        title: Text(
-          '${_getGreeting()}, $_coachName', //  banco de dados
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      drawer: _buildDrawer(),
-      body: _buildHomeContent(),
+    return BaseScreen(
+      currentIndex: 0, 
+      pageTitle: '${_getGreeting()}, $_coachName',
+      child: _buildHomeContent(), 
     );
   }
 }
