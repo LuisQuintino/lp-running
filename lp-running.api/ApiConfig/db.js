@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize'); // Adicione esta linha
+const { Sequelize } = require('sequelize'); 
 
 const sequelize = new Sequelize('lprunning', 'lprunningadmin', '12345678', {
   host: 'lprunning-instance.cd2w0wswy8xz.sa-east-1.rds.amazonaws.com',
