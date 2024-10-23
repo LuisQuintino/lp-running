@@ -21,9 +21,9 @@ class _CronometroScreenState extends State<CronometroScreen> {
     if (_isRunning) {
       _timer?.cancel();
     } else {
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
         setState(() {
-          _milliseconds += 100;
+          _milliseconds += 10; 
           _circleProgress = (_milliseconds % 60000) / 60000; 
         });
       });
@@ -46,15 +46,15 @@ class _CronometroScreenState extends State<CronometroScreen> {
   void _addLapTime() {
     final formattedTime = _formatTime(_milliseconds);
     setState(() {
-      _lapTimes.add(formattedTime);
+      _lapTimes.add(formattedTime); 
       _circleProgress = 0.0; 
     });
   }
 
   String _formatTime(int milliseconds) {
-    final int centiseconds = (milliseconds % 1000) ~/ 10;
-    final int minutes = (milliseconds ~/ 60000) % 60;
-    final int hours = (milliseconds ~/ 3600000);
+    final int centiseconds = (milliseconds % 1000) ~/ 10; 
+    final int minutes = (milliseconds ~/ 60000) % 60; 
+    final int hours = (milliseconds ~/ 3600000); 
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${centiseconds.toString().padLeft(2, '0')}';
   }
 
@@ -73,13 +73,12 @@ class _CronometroScreenState extends State<CronometroScreen> {
       pageTitle: 'Cronômetro', 
       child: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start, 
           children: [
-            
+            const SizedBox(height: 20), 
             Stack(
               alignment: Alignment.center,
               children: [
-                
                 Container(
                   width: 200,
                   height: 200,
@@ -88,7 +87,6 @@ class _CronometroScreenState extends State<CronometroScreen> {
                     color: Colors.black, 
                   ),
                 ),
-                
                 SizedBox(
                   width: 200,
                   height: 200,
@@ -99,7 +97,6 @@ class _CronometroScreenState extends State<CronometroScreen> {
                     backgroundColor: Colors.black,
                   ),
                 ),
-                // Texto do cronômetro
                 Text(
                   _formatTime(_milliseconds),
                   style: const TextStyle(
@@ -112,7 +109,6 @@ class _CronometroScreenState extends State<CronometroScreen> {
             ),
             const SizedBox(height: 20),
 
-            
             Container(
               width: 100,
               padding: const EdgeInsets.all(8.0),
@@ -132,10 +128,9 @@ class _CronometroScreenState extends State<CronometroScreen> {
             ),
             const SizedBox(height: 20),
 
-           
             Container(
               width: 300,
-              height: 250, 
+              height: 400, 
               padding: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -147,31 +142,38 @@ class _CronometroScreenState extends State<CronometroScreen> {
                   crossAxisAlignment: CrossAxisAlignment.center, 
                   children: [
                     for (var i = 0; i < _lapTimes.length; i++)
-                      GestureDetector(
-                        onTap: () => _assignAthlete(_lapTimes[i]), 
-                        child: Container(
-                          width: double.infinity, 
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16), 
-                          margin: const EdgeInsets.only(bottom: 8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Center(
-                            child: Text(
+                      Container(
+                        width: double.infinity, 
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6), 
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.red, width: 2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween, 
+                          children: [
+                            Text(
                               '${i + 1}. ${_lapTimes[i]}',
                               style: const TextStyle(fontSize: 16),
                             ),
-                          ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.arrow_forward,
+                                size: 24, 
+                                color: Colors.red, 
+                              ),
+                              onPressed: () => _assignAthlete(_lapTimes[i]),
+                            ),
+                          ],
                         ),
                       ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 30), 
 
-            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -182,10 +184,14 @@ class _CronometroScreenState extends State<CronometroScreen> {
                 FloatingActionButton(
                   onPressed: _startStopTimer,
                   backgroundColor: Colors.red,
-                  child: Icon(_isRunning ? Icons.pause : Icons.play_arrow, size: 30),
+                  child: Icon(
+                    _isRunning ? Icons.pause : Icons.play_arrow, 
+                    size: 30,
+                    color: Colors.black, 
+                  ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.delete, size: 40, color: Colors.red),
+                  icon: const Icon(Icons.delete, size: 40, color: Colors.black), 
                   onPressed: _resetTimer,
                 ),
               ],

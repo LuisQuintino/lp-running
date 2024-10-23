@@ -66,7 +66,7 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
   void _unarchiveActivity(int index) {
     setState(() {
       Map<String, dynamic> unarchivedActivity = _archivedActivities[index];
-      unarchivedActivity['enabled'] = false;
+      unarchivedActivity['enabled'] = true; // Ativar a atividade ao desarquivar
       unarchivedActivity['archived'] = false;
       _activities.add(unarchivedActivity);
       _archivedActivities.removeAt(index);
@@ -112,8 +112,10 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                         _archivedActivities[index]['enabled'] = value;
                       });
                     },
-                    activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
+                    activeColor: Colors.green, 
+                    inactiveThumbColor: Colors.grey.shade400, 
+                    activeTrackColor: Colors.lightGreen.shade200, 
+                    inactiveTrackColor: Colors.grey.shade300,
                   ),
                   IconButton(
                     icon: const Icon(Icons.unarchive, color: Colors.blue),
@@ -184,7 +186,9 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                                   });
                                 },
                                 activeColor: Colors.green,
-                                inactiveThumbColor: Colors.red,
+                                inactiveThumbColor: Colors.grey.shade400,
+                                activeTrackColor: Colors.lightGreen.shade200,
+                                inactiveTrackColor: Colors.grey.shade300,
                               ),
                               IconButton(
                                 icon: const Icon(Icons.archive, color: Colors.blue),

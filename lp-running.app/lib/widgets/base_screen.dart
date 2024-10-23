@@ -46,8 +46,8 @@ class _BaseScreenState extends State<BaseScreen> {
       case 5:
         route = '/training-types';
         break;
-      case 6:  // Novo caso para Configurações
-        route = '/master-control';  // Direcionando para MasterControlScreen
+      case 6:  
+        route = '/master-control';  
         break;
       default:
         route = '/home';

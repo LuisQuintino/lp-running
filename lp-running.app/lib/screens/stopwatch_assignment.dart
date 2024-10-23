@@ -117,11 +117,11 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
               child: Column(
                 children: [
                   const Text(
-                    'Assign to',
+                    'Select Athlete', 
                     style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-                  // List of Athletes
+                  // Lista de Atletas
                   ..._athletes.asMap().entries.map((entry) {
                     int index = entry.key;
                     String athleteName = entry.value['name'];

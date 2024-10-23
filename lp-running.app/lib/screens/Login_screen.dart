@@ -10,7 +10,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _rememberPassword = false; // Lembrar senha
+  bool _rememberPassword = false;
 
   @override
   void dispose() {
@@ -32,79 +32,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _forgotPassword() {
-    final TextEditingController _resetEmailController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.grey[300],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: Colors.black, width: 2.0),
-          ),
-          title: const Text(
-            'Esqueci minha senha',
-            style: TextStyle(color: Colors.black),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Por favor, insira o seu e-mail para recuperar a senha:',
-                style: TextStyle(color: Colors.black),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _resetEmailController,
-                decoration: InputDecoration(
-                  hintText: 'E-mail',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: Colors.black, width: 2.0),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () {
-                String resetEmail = _resetEmailController.text;
-                if (resetEmail.isNotEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('E-mail enviado com sucesso!')),
-                  );
-                  Navigator.pop(context);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Por favor, insira um e-mail válido.')),
-                  );
-                }
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildEmailField() {
     return TextField(
       controller: _emailController,
@@ -115,15 +42,15 @@ class _LoginScreenState extends State<LoginScreen> {
         fillColor: Colors.grey[800],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderSide: const BorderSide(color: Colors.black, width: 1.0), // Bordas mais finas
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderSide: const BorderSide(color: Colors.black, width: 1.0), 
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderSide: const BorderSide(color: Colors.black, width: 1.0), 
         ),
       ),
       style: const TextStyle(color: Colors.white),
@@ -141,15 +68,15 @@ class _LoginScreenState extends State<LoginScreen> {
         fillColor: Colors.grey[800],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderSide: const BorderSide(color: Colors.black, width: 1.0), 
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderSide: const BorderSide(color: Colors.black, width: 1.0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2.0),
+          borderSide: const BorderSide(color: Colors.black, width: 1.0), 
         ),
       ),
       style: const TextStyle(color: Colors.white),
@@ -179,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
         TextButton(
-          onPressed: _forgotPassword,
+          onPressed: () {},
           child: const Text(
             'Esqueci minha senha',
             style: TextStyle(color: Colors.white),
@@ -192,7 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildLoginButton() {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black, width: 2.0),
+        border: Border.all(color: Colors.black, width: 1.0), 
         borderRadius: BorderRadius.circular(10),
       ),
       child: SizedBox(

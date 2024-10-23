@@ -9,10 +9,8 @@ class ExportDataScreen extends StatefulWidget {
 
 class _ExportDataScreenState extends State<ExportDataScreen> {
   bool _recordsChecked = false;
-  bool _kmCoveredChecked = false;
   bool _bestTimesChecked = false;
   bool _trainingDaysChecked = false;
-  bool _averageSpeedsChecked = false;
   bool _personalInfoChecked = false;
 
   final TextEditingController _emailController = TextEditingController();
@@ -32,7 +30,6 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
         ),
       );
     } else {
-      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('E-mail enviado com sucesso!'),
@@ -96,11 +93,6 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
               _recordsChecked = value ?? false;
             });
           }),
-          _buildCheckboxTile('Quilômetros percorridos', _kmCoveredChecked, (value) {
-            setState(() {
-              _kmCoveredChecked = value ?? false;
-            });
-          }),
           _buildCheckboxTile('Melhores tempos', _bestTimesChecked, (value) {
             setState(() {
               _bestTimesChecked = value ?? false;
@@ -109,11 +101,6 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
           _buildCheckboxTile('Dias de treino', _trainingDaysChecked, (value) {
             setState(() {
               _trainingDaysChecked = value ?? false;
-            });
-          }),
-          _buildCheckboxTile('Velocidades médias', _averageSpeedsChecked, (value) {
-            setState(() {
-              _averageSpeedsChecked = value ?? false;
             });
           }),
           _buildCheckboxTile('Informações pessoais', _personalInfoChecked, (value) {
@@ -155,7 +142,12 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
         onPressed: _exportData,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.red, 
+          foregroundColor: Colors.white, 
+          side: const BorderSide(color: Colors.black, width: 1.0), 
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10), 
+          ),
         ),
         child: const Text(
           'Exportar dados',

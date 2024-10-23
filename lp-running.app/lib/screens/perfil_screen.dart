@@ -19,9 +19,9 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Future<Map<String, dynamic>> fetchUserProfile() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simula um atraso de busca no banco de dados
+    await Future.delayed(const Duration(seconds: 2)); 
     return {
-      'photoUrl': 'https://example.com/photo.jpg', // URL da foto
+      'photoUrl': 'https://example.com/photo.jpg', 
       'name': 'Nome do Usuário',
       'email': 'usuario@example.com',
       'phone': '(11) 99999-9999',

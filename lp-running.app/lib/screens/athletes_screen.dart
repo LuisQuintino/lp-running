@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'register_athlete_screen.dart';
 import 'race_details_screen.dart';
+import '../widgets/base_screen.dart';
 
 class AthletesScreen extends StatefulWidget {
-  final int currentIndex;
-
-  const AthletesScreen({super.key, required this.currentIndex});
+  const AthletesScreen({super.key});
 
   @override
   _AthletesScreenState createState() => _AthletesScreenState();
@@ -13,69 +12,63 @@ class AthletesScreen extends StatefulWidget {
 
 class _AthletesScreenState extends State<AthletesScreen> {
   String? selectedAthlete;
+  List<Map<String, dynamic>> athletes = [];
   List<Map<String, dynamic>> filteredAthletes = [];
   final List<Map<String, dynamic>> _archivedAthletes = [];
   TextEditingController searchController = TextEditingController();
-  bool showSearchField = false;
-  late Future<List<Map<String, dynamic>>> athletesFuture;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    athletesFuture = fetchAthletes();
-    searchController.addListener(_filterAthletes);
-  }
-
-  Future<List<Map<String, dynamic>>> fetchAthletes() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return [
+    athletes = [
       {'name': 'Dona Maria', 'active': true, 'archived': false},
       {'name': 'João Silva', 'active': false, 'archived': false},
       {'name': 'Maria Clara', 'active': true, 'archived': false},
     ];
+    filteredAthletes = List.from(athletes);
+    searchController.addListener(_filterAthletes);
   }
 
   void _filterAthletes() {
-    athletesFuture.then((athletes) {
-      setState(() {
-        filteredAthletes = athletes
-            .where((athlete) =>
-                athlete['name'].toLowerCase().contains(searchController.text.toLowerCase()))
-            .toList();
-      });
+    final query = searchController.text.toLowerCase();
+    setState(() {
+      filteredAthletes = athletes.where((athlete) {
+        final athleteName = athlete['name']!.toLowerCase();
+        return athleteName.contains(query);
+      }).toList();
     });
   }
 
   void _addNewAthlete(String name, String imageUrl) {
     setState(() {
-      filteredAthletes.add({'name': name, 'active': true, 'archived': false});
+      athletes.add({'name': name, 'active': true, 'archived': false});
+      _filterAthletes();
     });
   }
 
   void _archiveAthlete(int index) {
     setState(() {
-      filteredAthletes[index]['active'] = false; 
-      _archivedAthletes.add(filteredAthletes[index]); 
-      filteredAthletes.removeAt(index); 
+      filteredAthletes[index]['archived'] = true;
+      _archivedAthletes.add(filteredAthletes[index]);
+      athletes.removeAt(athletes.indexOf(filteredAthletes[index]));
+      _filterAthletes();
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Atleta arquivado e desativado com sucesso!')),
+      const SnackBar(content: Text('Atleta arquivado com sucesso!')),
     );
   }
 
   void _unarchiveAthlete(int index) {
     setState(() {
       final athlete = _archivedAthletes[index];
-      athlete['active'] = false; 
-      filteredAthletes.add(athlete); 
-      _archivedAthletes.removeAt(index); 
+      athlete['archived'] = false;
+      athletes.add(athlete);
+      _archivedAthletes.removeAt(index);
+      _filterAthletes();
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Atleta desarquivado com sucesso!')),
     );
-
-    Navigator.of(context).pop(); 
   }
 
   void _viewArchivedAthletes(BuildContext context) {
@@ -91,16 +84,6 @@ class _AthletesScreenState extends State<AthletesScreen> {
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Switch(
-                    value: athlete['active'],
-                    onChanged: (bool value) {
-                      setState(() {
-                        _archivedAthletes[index]['active'] = value;
-                      });
-                    },
-                    activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
-                  ),
                   IconButton(
                     icon: const Icon(Icons.unarchive, color: Colors.blue),
                     onPressed: () {
@@ -124,124 +107,39 @@ class _AthletesScreenState extends State<AthletesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: const Text(
-          'Atletas',
-          style: TextStyle(color: Colors.white), 
-        ),
-        backgroundColor: Colors.grey[800],
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
+    return BaseScreen(
+      currentIndex: 2,
+      pageTitle: 'Atletas',
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.archive),
           onPressed: () {
-            _scaffoldKey.currentState?.openDrawer();
+            _viewArchivedAthletes(context);
           },
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.archive),
-            onPressed: () {
-              _viewArchivedAthletes(context); 
-            },
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.grey,
-              ),
-              child: Text(
-                'Menu',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/home');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.timer),
-              title: const Text('Cronômetro'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/cronometro');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.people),
-              title: const Text('Atletas'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/atletas');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: const Text('Perfil'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/perfil');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.business_center),
-              title: const Text('Coaches'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/coaches');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.fitness_center),
-              title: const Text('Tipos de Treino'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/training-types');
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            if (showSearchField)
-              TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                  hintText: 'Buscar atleta',
-                  filled: true,
-                  fillColor: Colors.grey[200],
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
+      ],
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    prefixIcon: const Icon(Icons.search, color: Colors.grey),
+                    hintText: 'Search',
+                    filled: true,
+                    fillColor: Colors.grey[200],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
                   ),
                 ),
-              ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: FutureBuilder<List<Map<String, dynamic>>>( 
-                future: athletesFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return const Center(child: Text('Erro ao buscar atletas.'));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('Nenhum atleta encontrado.'));
-                  }
-
-                  filteredAthletes = snapshot.data!;
-                  return ListView.builder(
+                const SizedBox(height: 16),
+                Expanded(
+                  child: ListView.builder(
                     itemCount: filteredAthletes.length,
                     itemBuilder: (context, index) {
                       final athlete = filteredAthletes[index];
@@ -264,22 +162,38 @@ class _AthletesScreenState extends State<AthletesScreen> {
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
                             color: selectedAthlete == athlete['name']
-                                ? Theme.of(context).primaryColor
+                                ? Colors.grey
                                 : Colors.white,
-                            border: Border.all(color: Theme.of(context).primaryColor),
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                athlete['name'],
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: selectedAthlete == athlete['name']
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => RegisterAthleteScreen(
+                                            onRegisterAthlete: _addNewAthlete,
+                                            athleteName: athlete['name'],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: const Icon(Icons.edit, color: Colors.black),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    athlete['name'],
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ],
                               ),
                               Row(
                                 children: [
@@ -291,7 +205,9 @@ class _AthletesScreenState extends State<AthletesScreen> {
                                       });
                                     },
                                     activeColor: Colors.green,
-                                    inactiveThumbColor: Colors.red,
+                                    inactiveThumbColor: Colors.grey.shade400,
+                                    activeTrackColor: Colors.lightGreen.shade200,
+                                    inactiveTrackColor: Colors.grey.shade300,
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.archive, color: Colors.blue),
@@ -306,28 +222,29 @@ class _AthletesScreenState extends State<AthletesScreen> {
                         ),
                       );
                     },
-                  );
-                },
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => RegisterAthleteScreen(
-                onRegisterAthlete: _addNewAthlete,
-              ),
+          ),
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RegisterAthleteScreen(
+                      onRegisterAthlete: _addNewAthlete,
+                    ),
+                  ),
+                );
+              },
+              backgroundColor: Colors.green,
+              child: const Icon(Icons.add, color: Colors.white),
             ),
-          );
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
+          ),
+        ],
       ),
     );
   }

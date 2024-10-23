@@ -25,9 +25,9 @@ class _MasterControlScreenState extends State<MasterControlScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      currentIndex: 6, 
-      pageTitle: 'Controle de Acesso', 
-      showBackButton: false, 
+      currentIndex: 6,
+      pageTitle: 'Controle de Acesso',
+      showBackButton: false,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: ListView(
@@ -134,14 +134,18 @@ class _MasterControlScreenState extends State<MasterControlScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, 
-                foregroundColor: Colors.white, 
-                side: const BorderSide(color: Colors.black, width: 2), 
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                side: const BorderSide(color: Colors.black, width: 1.0), 
               ),
               onPressed: () {
                 Navigator.pushReplacementNamed(context, '/home');
               },
-              child: const Text('Salvar'),
+              child: const Text('Salvar', style: TextStyle(fontSize: 18)),
             ),
           ],
         ),
@@ -157,8 +161,10 @@ class _MasterControlScreenState extends State<MasterControlScreen> {
     return SwitchListTile(
       title: Text(title),
       value: value,
-      activeColor: Colors.green,
-      inactiveThumbColor: Colors.red,
+      activeColor: Colors.green, 
+      inactiveThumbColor: Colors.grey.shade400, 
+      activeTrackColor: Colors.lightGreen.shade200, 
+      inactiveTrackColor: Colors.grey.shade300, 
       onChanged: onChanged,
     );
   }

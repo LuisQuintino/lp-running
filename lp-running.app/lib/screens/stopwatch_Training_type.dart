@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'package:http/http.dart' as http; // Para integração futura com banco de dados
-// import 'dart:convert';
+import 'cronometro_screen.dart'; // Importa a tela do cronômetro (substitua o caminho conforme sua estrutura)
 
 class StopwatchTrainingTypeScreen extends StatefulWidget {
   final String lapTime;
@@ -20,17 +19,26 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
     '400 to 500 meters',
   ]; 
   final bool _isLoading = false; 
+
   @override
   void initState() {
     super.initState();
-    
   }
 
   void _confirmTrainingSelection() {
     if (_selectedTrainingIndex != null) {
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Treino selecionado: ${_trainingOptions[_selectedTrainingIndex!]}')),
+        const SnackBar(content: Text('Training successfully saved')),
       );
+
+      
+      Future.delayed(const Duration(seconds: 2), () {
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => const CronometroScreen()), 
+          (Route<dynamic> route) => false, 
+        );
+      });
     }
   }
 
@@ -69,7 +77,7 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
               ),
             ),
 
-            
+            // Informações de treino
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -87,12 +95,12 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
                   
                   
                   const Text(
-                    'Choose training type',
+                    'Choose Completed Training',
                     style: TextStyle(fontSize: 24, color: Colors.white), 
                   ),
                   const SizedBox(height: 16),
 
-                  // Lista de treinos (exemplo fixo, substituir futuramente com dados do banco)
+                  
                   _isLoading
                       ? const CircularProgressIndicator(color: Colors.red)
                       : Column(
@@ -132,9 +140,24 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
             const SizedBox(height: 20),
 
             
-            IconButton(
-              icon: const Icon(Icons.check_circle, color: Colors.red, size: 40),
-              onPressed: _confirmTrainingSelection,
+            SizedBox(
+              width: 160,
+              child: ElevatedButton(
+                onPressed: _confirmTrainingSelection,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, 
+                  foregroundColor: Colors.white, 
+                  side: const BorderSide(color: Colors.black, width: 1.0), 
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), 
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: const Text(
+                  'Confirm',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
             ),
           ],
         ),
