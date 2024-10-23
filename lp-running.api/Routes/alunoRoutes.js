@@ -1,11 +1,11 @@
+
 const express = require('express');
 const router = express.Router();
-const alunoController = require('../controllers/AlunoController');
+const AlunoController = require('../Controller/AlunoController'); 
 
-// Rotas CRUD para Aluno
-router.get('/alunos', alunoController.getAlunos);
-router.post('/alunos', alunoController.createAluno);
-router.put('/alunos/:id', alunoController.updateAluno);
-router.delete('/alunos/:id', alunoController.inativarAluno);
+router.get('/', AlunoController.getAlunos);
+router.post('/', AlunoController.createAluno);
+router.put('/:id', AlunoController.updateAluno);
+router.delete('/:id', AlunoController.inativarAluno);
 
 module.exports = router;

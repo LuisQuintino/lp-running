@@ -1,26 +1,37 @@
-const Coach = require('../Model/coachModel');
+const Coach = require('../Models/Coach');
 
-class CoachService {
-  async getAllCoaches() {
-    return await Coach.getAll();
-  }
+exports.getAllCoaches = async () => {
+  return await Coach.findAll({ where: { archived: false } });
+};
 
-  async getCoachById(id) {
-    return await Coach.getById(id);
-  }
+exports.createCoach = async (data) => {
+  return await Coach.create(data);
+};
 
-  async createCoach(coachData) {
-    return await Coach.create(coachData);
-  }
+exports.updateCoach = async (id, data) => {
+  const coach = await Coach.findByPk(id);
+  if (!coach) throw new Error('Coach não encontrado');
+  
+  Object.assign(coach, data);
+  await coach.save();
+  return coach;
+};
 
-  async updateCoach(id, coachData) {
-    await Coach.update(id, coachData);
-    return await Coach.getById(id);
-  }
+exports.archiveCoach = async (id) => {
+  const coach = await Coach.findByPk(id);
+  if (!coach) throw new Error('Coach não encontrado');
 
-  async deleteCoach(id) {
-    await Coach.delete(id);
-  }
-}
+  coach.active = false;
+  coach.archived = true;
+  await coach.save();
+  return coach;
+};
 
-module.exports = new CoachService();
+exports.unarchiveCoach = async (id) => {
+  const coach = await Coach.findByPk(id);
+  if (!coach) throw new Error('Coach não encontrado');
+
+  coach.archived = false;
+  await coach.save();
+  return coach;
+};
