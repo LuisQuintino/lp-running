@@ -27,7 +27,6 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
     super.dispose();
   }
 
-
   void _selectDuration(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -40,7 +39,6 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
             initialTimerDuration: const Duration(hours: 0, minutes: 0),
             onTimerDurationChanged: (Duration newDuration) {
               setState(() {
-                
                 String formattedDuration = "${newDuration.inHours.toString().padLeft(2, '0')}:"
                     "${(newDuration.inMinutes % 60).toString().padLeft(2, '0')}";
                 _averageDurationController.text = formattedDuration;
@@ -137,6 +135,12 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
               child: ElevatedButton(
                 onPressed: _registerTrainingType,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Fundo vermelho
+                  foregroundColor: Colors.white, // Texto branco
+                  side: const BorderSide(color: Colors.black, width: 1.0), // Borda preta fina
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10), // Bordas arredondadas com 10 de raio
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text('Register'),
