@@ -27,7 +27,6 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
     super.dispose();
   }
 
-
   void _selectDuration(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -36,11 +35,10 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
           height: 250,
           color: Colors.white,
           child: CupertinoTimerPicker(
-            mode: CupertinoTimerPickerMode.hm, 
+            mode: CupertinoTimerPickerMode.hm,
             initialTimerDuration: const Duration(hours: 0, minutes: 0),
             onTimerDurationChanged: (Duration newDuration) {
               setState(() {
-                
                 String formattedDuration = "${newDuration.inHours.toString().padLeft(2, '0')}:"
                     "${(newDuration.inMinutes % 60).toString().padLeft(2, '0')}";
                 _averageDurationController.text = formattedDuration;
@@ -120,7 +118,7 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
             ),
             const SizedBox(height: 16),
             GestureDetector(
-              onTap: () => _selectDuration(context), 
+              onTap: () => _selectDuration(context),
               child: AbsorbPointer(
                 child: TextField(
                   controller: _averageDurationController,
@@ -137,6 +135,12 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
               child: ElevatedButton(
                 onPressed: _registerTrainingType,
                 style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.black, width: 1.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text('Register'),

@@ -32,13 +32,13 @@ class _BaseScreenState extends State<BaseScreen> {
         route = '/home';
         break;
       case 1:
-        route = '/cronometro';
+        route = '/stopwatch';
         break;
       case 2:
-        route = '/atletas';
+        route = '/athletes';
         break;
       case 3:
-        route = '/perfil';
+        route = '/profile';
         break;
       case 4:
         route = '/coaches';
@@ -46,13 +46,17 @@ class _BaseScreenState extends State<BaseScreen> {
       case 5:
         route = '/training-types';
         break;
-      case 6:  // Novo caso para Configurações
-        route = '/master-control';  // Direcionando para MasterControlScreen
+      case 6:
+        route = '/master-control';
         break;
       default:
         route = '/home';
     }
     Navigator.of(context).pushNamedAndRemoveUntil(route, (route) => false);
+  }
+
+  void _logoff() {
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
   }
 
   @override
@@ -110,12 +114,18 @@ class _BaseScreenState extends State<BaseScreen> {
             ),
           ),
           _buildMenuOption(Icons.home, 'Home', 0),
-          _buildMenuOption(Icons.timer, 'Cronômetro', 1),
-          _buildMenuOption(Icons.people, 'Atletas', 2),
-          _buildMenuOption(Icons.person, 'Perfil', 3),
+          _buildMenuOption(Icons.timer, 'Stopwatch', 1),
+          _buildMenuOption(Icons.people, 'Athletes', 2),
+          _buildMenuOption(Icons.person, 'Profile', 3),
           _buildMenuOption(Icons.construction, 'Coaches', 4),
-          _buildMenuOption(Icons.directions_run, 'Tipos de Treino', 5),
-          _buildMenuOption(Icons.settings, 'Controle de Acesso', 6), 
+          _buildMenuOption(Icons.directions_run, 'Training Types', 5),
+          _buildMenuOption(Icons.settings, 'Access Control', 6),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.exit_to_app, color: Colors.red),
+            title: const Text('Logoff', style: TextStyle(color: Colors.red)),
+            onTap: _logoff,
+          ),
         ],
       ),
     );

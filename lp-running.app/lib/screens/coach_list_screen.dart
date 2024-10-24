@@ -91,7 +91,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
   void _unarchiveCoach(int index) {
     setState(() {
       final coach = _archivedCoaches[index];
-      coach['active'] = false; 
+      coach['active'] = true; 
      
       coachesFuture = coachesFuture.then((coaches) => [
             ...coaches,
@@ -100,7 +100,8 @@ class _CoachListScreenState extends State<CoachListScreen> {
       _archivedCoaches.removeAt(index); 
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Coach desarquivado com sucesso!')));
+      const SnackBar(content: Text('Coach desarquivado com sucesso!')),
+    );
     Navigator.of(context).pop(); 
   }
 
@@ -126,7 +127,9 @@ class _CoachListScreenState extends State<CoachListScreen> {
                       });
                     },
                     activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
+                    inactiveThumbColor: Colors.grey.shade400,
+                    activeTrackColor: Colors.lightGreen.shade200,
+                    inactiveTrackColor: Colors.grey.shade300,
                   ),
                   IconButton(
                     icon: const Icon(Icons.unarchive, color: Colors.blue),
@@ -158,7 +161,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
       ],
       child: Stack(
         children: [
-          FutureBuilder<List<Map<String, dynamic>>>(
+          FutureBuilder<List<Map<String, dynamic>>>( 
             future: coachesFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -179,7 +182,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                        color: Theme.of(context).primaryColor,
+                         color: Colors.black,
                         width: 1,
                       ),
                     ),
@@ -224,7 +227,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                               Column(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit),
+                                    icon: const Icon(Icons.edit, color: Colors.black), 
                                     onPressed: () => _editCoach(index, coaches),
                                   ),
                                   Switch(
@@ -235,7 +238,9 @@ class _CoachListScreenState extends State<CoachListScreen> {
                                       });
                                     },
                                     activeColor: Colors.green,
-                                    inactiveThumbColor: Colors.red,
+                                    inactiveThumbColor: Colors.grey.shade400,
+                                    activeTrackColor: Colors.lightGreen.shade200,
+                                    inactiveTrackColor: Colors.grey.shade300,
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.archive, color: Colors.blue),
@@ -260,7 +265,8 @@ class _CoachListScreenState extends State<CoachListScreen> {
             right: 16,
             child: FloatingActionButton(
               onPressed: _addNewCoach,
-              child: const Icon(Icons.add),
+              backgroundColor: Colors.green, // Definindo cor de fundo verde
+              child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
         ],

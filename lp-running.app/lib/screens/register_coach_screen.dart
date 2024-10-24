@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class RegisterCoachScreen extends StatefulWidget {
@@ -74,7 +75,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content:
-              Text('Por favor, preencha o nome, e-mail e CPF corretamente.'),
+              Text('Please fill out the name, email, and CPF correctly.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -95,7 +96,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Cadastro realizado com sucesso.'),
+        content: Text('Registration successful.'),
         backgroundColor: Colors.red,
       ),
     );
@@ -109,7 +110,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
       appBar: AppBar(
         backgroundColor: Colors.grey[800],
         title: const Text(
-          'Registrar Coach',
+          'Register Coach',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -127,30 +128,30 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
             children: [
               TextField(
                 controller: _nameController,
-                style: const TextStyle(color: Colors.black), 
+                style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(
-                  labelText: 'Nome',
+                  labelText: 'Name',
                   labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: _emailController,
-                style: const TextStyle(color: Colors.black), 
+                style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(
-                  labelText: 'E-mail',
+                  labelText: 'Email',
                   labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -161,22 +162,22 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
               if (!_isEmailValid(_emailController.text) &&
                   _emailController.text.isNotEmpty)
                 const Text(
-                  'Formato inválido. Use nome@exemplo.com ou nome@nome.com.br',
+                  'Invalid format. Use name@example.com or name@name.com.br',
                   style: TextStyle(color: Colors.red),
                 ),
               const SizedBox(height: 16),
               TextField(
                 controller: _cpfController,
-                style: const TextStyle(color: Colors.black), 
+                style: const TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   labelText: 'CPF',
                   labelStyle: const TextStyle(color: Colors.black),
                   hintText: '000.000.000-00',
                   focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   suffixIcon: _isCpfValid == null
                       ? null
@@ -195,23 +196,23 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
               const SizedBox(height: 16),
               TextField(
                 controller: _dobController,
-                style: const TextStyle(color: Colors.black), 
+                style: const TextStyle(color: Colors.black),
                 decoration: const InputDecoration(
-                  labelText: 'Data de Nascimento',
+                  labelText: 'Date of Birth',
                   hintText: '00/00/0000',
                   labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black), 
+                    borderSide: BorderSide(color: Colors.black),
                   ),
                 ),
                 keyboardType: TextInputType.datetime,
                 inputFormatters: [_dobFormatter],
               ),
               const SizedBox(height: 16),
-              const Text('Selecione o Cargo:',
+              const Text('Select Role:',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 8),
               Row(
@@ -265,7 +266,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
                   ),
                   onPressed: _registerCoach,
                   child: const Text(
-                    'Registrar',
+                    'Register',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

@@ -44,7 +44,7 @@ class _AthleteInformationScreenState extends State<AthleteInformationScreen> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => const BestResultsScreen(), // Navega para a tela de melhores resultados
+                    builder: (context) => const BestResultsScreen(), 
                   ),
                 );
               },
@@ -62,7 +62,7 @@ class _AthleteInformationScreenState extends State<AthleteInformationScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.grey[200],
-                border: Border.all(color: Colors.red),
+                border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -71,7 +71,7 @@ class _AthleteInformationScreenState extends State<AthleteInformationScreen> {
                   CheckboxListTile(
                     title: const Text('Knee'),
                     value: _kneeChecked,
-                    activeColor: Colors.green,
+                    activeColor: Colors.grey,
                     onChanged: (bool? value) {
                       setState(() {
                         _kneeChecked = value ?? false;
@@ -82,7 +82,7 @@ class _AthleteInformationScreenState extends State<AthleteInformationScreen> {
                   CheckboxListTile(
                     title: const Text('Spine'),
                     value: _spineChecked,
-                    activeColor: Colors.green,
+                    activeColor: Colors.grey,
                     onChanged: (bool? value) {
                       setState(() {
                         _spineChecked = value ?? false;
@@ -93,7 +93,7 @@ class _AthleteInformationScreenState extends State<AthleteInformationScreen> {
                   CheckboxListTile(
                     title: const Text('Others'),
                     value: _othersChecked,
-                    activeColor: Colors.green,
+                    activeColor: Colors.grey,
                     onChanged: (bool? value) {
                       setState(() {
                         _othersChecked = value ?? false;

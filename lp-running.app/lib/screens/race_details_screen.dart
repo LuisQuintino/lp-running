@@ -39,8 +39,22 @@ class RaceDetailsScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundImage: imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
-              child: imageUrl.isEmpty ? const Icon(Icons.person, size: 50) : null,
+              backgroundColor: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.black, width: 1),
+                ),
+                child: CircleAvatar(
+                  radius: 48,
+                  backgroundColor: Colors.grey[400],
+                  child: imageUrl.isEmpty
+                      ? const Icon(Icons.person, size: 50, color: Colors.white)
+                      : null,
+                  backgroundImage:
+                      imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -48,7 +62,7 @@ class RaceDetailsScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, 
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 16),
@@ -60,12 +74,17 @@ class RaceDetailsScreen extends StatelessWidget {
                   ),
                 );
               },
-              icon: const Icon(Icons.description),
-              label: const Text('Athlete Information'),
+              icon: const Icon(Icons.description, color: Colors.white),
+              label: const Text(
+                'Athlete Information',
+                style: TextStyle(color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
+                  side: const BorderSide(color: Colors.black, width: 1),
                 ),
               ),
             ),
@@ -75,7 +94,7 @@ class RaceDetailsScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black, 
+                color: Colors.black,
               ),
             ),
             const SizedBox(height: 8),

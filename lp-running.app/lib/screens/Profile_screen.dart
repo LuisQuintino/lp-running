@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-
 import '../widgets/base_screen.dart';
 
-class PerfilScreen extends StatefulWidget {
-  const PerfilScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  _PerfilScreenState createState() => _PerfilScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
-class _PerfilScreenState extends State<PerfilScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   late Future<Map<String, dynamic>> userProfileFuture;
 
   @override
@@ -19,11 +18,11 @@ class _PerfilScreenState extends State<PerfilScreen> {
   }
 
   Future<Map<String, dynamic>> fetchUserProfile() async {
-    await Future.delayed(const Duration(seconds: 2)); // Simula um atraso de busca no banco de dados
+    await Future.delayed(const Duration(seconds: 2)); 
     return {
-      'photoUrl': 'https://example.com/photo.jpg', // URL da foto
-      'name': 'Nome do Usuário',
-      'email': 'usuario@example.com',
+      'photoUrl': 'https://example.com/photo.jpg', 
+      'name': 'User Name',
+      'email': 'user@example.com',
       'phone': '(11) 99999-9999',
     };
   }
@@ -32,23 +31,23 @@ class _PerfilScreenState extends State<PerfilScreen> {
   Widget build(BuildContext context) {
     return BaseScreen(
       currentIndex: 3,
-      pageTitle: 'Perfil',
+      pageTitle: 'Profile',
       child: FutureBuilder<Map<String, dynamic>>(
         future: userProfileFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            return const Center(child: Text('Erro ao carregar perfil.'));
+            return const Center(child: Text('Error loading profile.'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('Nenhum dado encontrado.'));
+            return const Center(child: Text('No data found.'));
           }
 
           final userProfile = snapshot.data!;
           final photoUrl = userProfile['photoUrl'] ?? '';
-          final name = userProfile['name'] ?? 'Nome não disponível';
-          final email = userProfile['email'] ?? 'Email não disponível';
-          final phone = userProfile['phone'] ?? 'Telefone não disponível';
+          final name = userProfile['name'] ?? 'Name not available';
+          final email = userProfile['email'] ?? 'Email not available';
+          final phone = userProfile['phone'] ?? 'Phone not available';
 
           return Padding(
             padding: const EdgeInsets.all(16.0),

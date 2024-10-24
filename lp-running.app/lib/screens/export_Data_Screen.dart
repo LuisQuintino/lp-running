@@ -9,10 +9,8 @@ class ExportDataScreen extends StatefulWidget {
 
 class _ExportDataScreenState extends State<ExportDataScreen> {
   bool _recordsChecked = false;
-  bool _kmCoveredChecked = false;
   bool _bestTimesChecked = false;
   bool _trainingDaysChecked = false;
-  bool _averageSpeedsChecked = false;
   bool _personalInfoChecked = false;
 
   final TextEditingController _emailController = TextEditingController();
@@ -28,14 +26,13 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
     if (email.isEmpty || !_isValidEmail(email)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Por favor, insira um endereço de e-mail válido.'),
+          content: Text('Please enter a valid email address.'),
         ),
       );
     } else {
-      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('E-mail enviado com sucesso!'),
+          content: Text('Email sent successfully!'),
         ),
       );
 
@@ -54,7 +51,7 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
       appBar: AppBar(
         backgroundColor: Colors.grey[800],
         title: const Text(
-          'Exportar Dados',
+          'Export Data',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -91,32 +88,22 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildCheckboxTile('Registros', _recordsChecked, (value) {
+          _buildCheckboxTile('Records', _recordsChecked, (value) {
             setState(() {
               _recordsChecked = value ?? false;
             });
           }),
-          _buildCheckboxTile('Quilômetros percorridos', _kmCoveredChecked, (value) {
-            setState(() {
-              _kmCoveredChecked = value ?? false;
-            });
-          }),
-          _buildCheckboxTile('Melhores tempos', _bestTimesChecked, (value) {
+          _buildCheckboxTile('Best times', _bestTimesChecked, (value) {
             setState(() {
               _bestTimesChecked = value ?? false;
             });
           }),
-          _buildCheckboxTile('Dias de treino', _trainingDaysChecked, (value) {
+          _buildCheckboxTile('Training days', _trainingDaysChecked, (value) {
             setState(() {
               _trainingDaysChecked = value ?? false;
             });
           }),
-          _buildCheckboxTile('Velocidades médias', _averageSpeedsChecked, (value) {
-            setState(() {
-              _averageSpeedsChecked = value ?? false;
-            });
-          }),
-          _buildCheckboxTile('Informações pessoais', _personalInfoChecked, (value) {
+          _buildCheckboxTile('Personal information', _personalInfoChecked, (value) {
             setState(() {
               _personalInfoChecked = value ?? false;
             });
@@ -140,9 +127,9 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
     return TextField(
       controller: _emailController,
       decoration: const InputDecoration(
-        labelText: 'Endereço de e-mail',
+        labelText: 'Email address',
         border: OutlineInputBorder(),
-        hintText: 'Digite seu endereço de e-mail',
+        hintText: 'Enter your email address',
       ),
       keyboardType: TextInputType.emailAddress,
     );
@@ -155,10 +142,15 @@ class _ExportDataScreenState extends State<ExportDataScreen> {
         onPressed: _exportData,
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-          backgroundColor: Theme.of(context).primaryColor,
+          backgroundColor: Colors.red,
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Colors.black, width: 1.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
         child: const Text(
-          'Exportar dados',
+          'Export Data',
           style: TextStyle(color: Colors.white),
         ),
       ),

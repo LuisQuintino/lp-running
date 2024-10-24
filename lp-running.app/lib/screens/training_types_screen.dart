@@ -14,23 +14,23 @@ class TrainingTypesScreen extends StatefulWidget {
 class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
   final List<Map<String, dynamic>> _activities = [
     {
-      'name': 'Treino Fácil',
-      'level': 'Básico',
-      'duration': '30 minutos',
+      'name': 'Easy Training',
+      'level': 'Basic',
+      'duration': '30 minutes',
       'enabled': true,
       'archived': false,
     },
     {
-      'name': 'Treino Intermediário',
-      'level': 'Médio',
-      'duration': '45 minutos',
+      'name': 'Intermediate Training',
+      'level': 'Medium',
+      'duration': '45 minutes',
       'enabled': false,
       'archived': false,
     },
     {
-      'name': 'Treino Avançado',
-      'level': 'Avançado',
-      'duration': '60 minutos',
+      'name': 'Advanced Training',
+      'level': 'Advanced',
+      'duration': '60 minutes',
       'enabled': true,
       'archived': false,
     },
@@ -58,7 +58,7 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Treino arquivado com sucesso!'),
+        content: Text('Training archived successfully!'),
       ),
     );
   }
@@ -66,14 +66,14 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
   void _unarchiveActivity(int index) {
     setState(() {
       Map<String, dynamic> unarchivedActivity = _archivedActivities[index];
-      unarchivedActivity['enabled'] = false;
+      unarchivedActivity['enabled'] = true;
       unarchivedActivity['archived'] = false;
       _activities.add(unarchivedActivity);
       _archivedActivities.removeAt(index);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Treino desarquivado com sucesso!'),
+        content: Text('Training unarchived successfully!'),
       ),
     );
     Navigator.of(context).pop();
@@ -113,7 +113,9 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                       });
                     },
                     activeColor: Colors.green,
-                    inactiveThumbColor: Colors.red,
+                    inactiveThumbColor: Colors.grey.shade400,
+                    activeTrackColor: Colors.lightGreen.shade200,
+                    inactiveTrackColor: Colors.grey.shade300,
                   ),
                   IconButton(
                     icon: const Icon(Icons.unarchive, color: Colors.blue),
@@ -158,10 +160,9 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                       return Card(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                            color: activity['enabled']
-                                ? Theme.of(context).primaryColor
-                                : Colors.grey,
+                          side: const BorderSide(
+                            color: Colors.black, // Cor preta para a borda
+                            width: 1,
                           ),
                         ),
                         child: ListTile(
@@ -184,7 +185,9 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                                   });
                                 },
                                 activeColor: Colors.green,
-                                inactiveThumbColor: Colors.red,
+                                inactiveThumbColor: Colors.grey.shade400,
+                                activeTrackColor: Colors.lightGreen.shade200,
+                                inactiveTrackColor: Colors.grey.shade300,
                               ),
                               IconButton(
                                 icon: const Icon(Icons.archive, color: Colors.blue),
@@ -194,9 +197,9 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
                               ),
                             ],
                           ),
-                          leading: Icon(
+                          leading: const Icon(
                             Icons.edit,
-                            color: Theme.of(context).iconTheme.color,
+                            color: Colors.black, 
                           ),
                         ),
                       );
@@ -213,6 +216,7 @@ class _TrainingTypesScreenState extends State<TrainingTypesScreen> {
               onPressed: () {
                 _navigateToRegisterActivity(context);
               },
+              backgroundColor: Colors.green,
               child: const Icon(Icons.add),
             ),
           ),

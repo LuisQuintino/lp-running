@@ -29,7 +29,6 @@ class _RaceSpecificDetailsScreenState extends State<RaceSpecificDetailsScreen> {
     await Future.delayed(const Duration(seconds: 2));
     return {
       'time': '11.2 seconds',
-      'averageSpeed': '8.93 m/s',
       'description': 'Race description from the database',
     };
   }
@@ -68,7 +67,6 @@ class _RaceSpecificDetailsScreenState extends State<RaceSpecificDetailsScreen> {
 
           final raceDetails = snapshot.data!;
           final time = raceDetails['time'] ?? 'Unknown';
-          final averageSpeed = raceDetails['averageSpeed'] ?? 'Unknown';
           final description = raceDetails['description'] ?? 'No description available';
 
           return Padding(
@@ -93,7 +91,6 @@ class _RaceSpecificDetailsScreenState extends State<RaceSpecificDetailsScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text('• Time: $time'),
-                      Text('• Average speed: $averageSpeed'),
                     ],
                   ),
                 ),
