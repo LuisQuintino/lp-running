@@ -12,20 +12,30 @@ class _HomeScreenState extends State<HomeScreen> {
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Bom dia';
+      return 'Good morning';
     } else if (hour < 18) {
-      return 'Boa tarde';
+      return 'Good afternoon';
     } else {
-      return 'Boa noite';
+      return 'Good evening';
     }
   }
 
-  String _coachName = "Ache um Bug 😉"; 
+  String _coachName = "Find a Bug 😉"; //substituir pela pessoa logada
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserName(); // Função para buscar o nome do usuário no bd
+  }
+
+  void _fetchUserName() async {
+    // TODO: Adicione o código de conexão ao db aqui
+  
+  }
 
   void _navigateToScreen(String routeName) {
     Navigator.pushNamed(context, routeName);
   }
-
 
   Widget _buildHomeContent() {
     return SingleChildScrollView(
@@ -34,18 +44,18 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const SizedBox(height: 24),
           GestureDetector(
-            onTap: () => _navigateToScreen('/cronometro'),
-            child: _buildImageCard('Cronômetro', 'lib/assets/images/stopwatch.png'),
+            onTap: () => _navigateToScreen('/stopwatch'),
+            child: _buildImageCard('Stopwatch', 'lib/assets/images/stopwatch.png'),
           ),
           const SizedBox(height: 16),
           GestureDetector(
-            onTap: () => _navigateToScreen('/atletas'),
-            child: _buildImageCard('Atletas', 'lib/assets/images/athletes.png'),
+            onTap: () => _navigateToScreen('/athletes'),
+            child: _buildImageCard('Athletes', 'lib/assets/images/athletes.png'),
           ),
           const SizedBox(height: 16),
           GestureDetector(
             onTap: () => _navigateToScreen('/training-types'),
-            child: _buildImageCard('Tipos de Treino', 'lib/assets/images/training_types.png'),
+            child: _buildImageCard('Training Types', 'lib/assets/images/training_types.png'),
           ),
           const SizedBox(height: 16),
           GestureDetector(
@@ -98,9 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BaseScreen(
-      currentIndex: 0, 
+      currentIndex: 0,
       pageTitle: '${_getGreeting()}, $_coachName',
-      child: _buildHomeContent(), 
+      child: _buildHomeContent(),
     );
   }
 }

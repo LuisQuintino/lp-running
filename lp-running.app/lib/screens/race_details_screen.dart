@@ -39,17 +39,17 @@ class RaceDetailsScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 50,
-              backgroundColor: Colors.transparent, 
+              backgroundColor: Colors.transparent,
               child: Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black, width: 1), 
+                  border: Border.all(color: Colors.black, width: 1),
                 ),
                 child: CircleAvatar(
-                  radius: 48, 
-                  backgroundColor: Colors.grey[400], 
+                  radius: 48,
+                  backgroundColor: Colors.grey[400],
                   child: imageUrl.isEmpty
-                      ? const Icon(Icons.person, size: 50, color: Colors.white) 
+                      ? const Icon(Icons.person, size: 50, color: Colors.white)
                       : null,
                   backgroundImage:
                       imageUrl.isNotEmpty ? NetworkImage(imageUrl) : null,
@@ -74,17 +74,17 @@ class RaceDetailsScreen extends StatelessWidget {
                   ),
                 );
               },
-              icon: const Icon(Icons.description, color: Colors.white), 
+              icon: const Icon(Icons.description, color: Colors.white),
               label: const Text(
                 'Athlete Information',
-                style: TextStyle(color: Colors.white), 
+                style: TextStyle(color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red, 
+                backgroundColor: Colors.red,
                 padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
-                  side: const BorderSide(color: Colors.black, width: 1), 
+                  side: const BorderSide(color: Colors.black, width: 1),
                 ),
               ),
             ),

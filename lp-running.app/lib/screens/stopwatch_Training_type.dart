@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'cronometro_screen.dart'; // Importa a tela do cronômetro (substitua o caminho conforme sua estrutura)
+import 'Stopwatch_screen.dart';
 
 class StopwatchTrainingTypeScreen extends StatefulWidget {
   final String lapTime;
@@ -17,26 +17,19 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
     '100 to 200 meters',
     '300 to 400 meters',
     '400 to 500 meters',
-  ]; 
-  final bool _isLoading = false; 
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  ];
+  final bool _isLoading = false;
 
   void _confirmTrainingSelection() {
     if (_selectedTrainingIndex != null) {
-      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Training successfully saved')),
       );
 
-      
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const CronometroScreen()), 
-          (Route<dynamic> route) => false, 
+          MaterialPageRoute(builder: (context) => const StopwatchScreen()), // Corrigido aqui
+          (Route<dynamic> route) => false,
         );
       });
     }
@@ -48,23 +41,22 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
       appBar: AppBar(
         title: const Text(
           'Stopwatch Training Type',
-          style: TextStyle(color: Colors.white), 
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.grey[800], 
+        backgroundColor: Colors.grey[800],
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), 
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
       ),
-      backgroundColor: Colors.grey[300], 
+      backgroundColor: Colors.grey[300],
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Display do tempo da volta
             Container(
               margin: const EdgeInsets.only(bottom: 40),
               child: Text(
@@ -76,8 +68,6 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
                 ),
               ),
             ),
-
-            // Informações de treino
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -88,19 +78,15 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    widget.athlete, 
-                    style: const TextStyle(fontSize: 24, color: Colors.white), 
+                    widget.athlete,
+                    style: const TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-                  
-                  
                   const Text(
                     'Choose Completed Training',
-                    style: TextStyle(fontSize: 24, color: Colors.white), 
+                    style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-
-                  
                   _isLoading
                       ? const CircularProgressIndicator(color: Colors.red)
                       : Column(
@@ -138,18 +124,16 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
               ),
             ),
             const SizedBox(height: 20),
-
-            
             SizedBox(
               width: 160,
               child: ElevatedButton(
                 onPressed: _confirmTrainingSelection,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, 
-                  foregroundColor: Colors.white, 
-                  side: const BorderSide(color: Colors.black, width: 1.0), 
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.black, width: 1.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), 
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 12),
                 ),

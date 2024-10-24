@@ -1,57 +1,41 @@
 import 'package:flutter/material.dart';
+import 'screens/splash_screen.dart'; 
 import 'screens/home_screen.dart';
-import 'screens/cronometro_screen.dart';
+import 'screens/stopwatch_screen.dart';
 import 'screens/athletes_screen.dart';
-import 'screens/perfil_screen.dart';
+import 'screens/profile_screen.dart';
 import 'screens/coach_list_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/splash_screen.dart';
 import 'screens/training_types_screen.dart';
-import 'screens/master_control_screen.dart'; 
+import 'screens/master_control_screen.dart';
+import 'screens/login_screen.dart'; 
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Lp_Running',
-      theme: ThemeData(
-        primaryColor: Colors.black,
-        scaffoldBackgroundColor: Colors.grey[300],
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.black),
-          titleTextStyle: TextStyle(color: Colors.black, fontSize: 20),
-          elevation: 0,
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          backgroundColor: Colors.green,
-          selectedItemColor: Colors.black,
-          unselectedItemColor: Colors.black54,
-        ),
-        floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: Colors.green,
-        ),
-      ),
-      initialRoute: '/splash',
+      title: 'LpRunning',
+      initialRoute: '/splash', 
       routes: {
         '/splash': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
-        '/cronometro': (context) => const CronometroScreen(),
-        '/atletas': (context) => const AthletesScreen(),
-        '/perfil': (context) => const PerfilScreen(),
+        '/stopwatch': (context) => const StopwatchScreen(),
+        '/athletes': (context) => const AthletesScreen(),
+        '/profile': (context) => const ProfileScreen(),
         '/coaches': (context) => const CoachListScreen(),
         '/training-types': (context) => const TrainingTypesScreen(),
-        '/master-control': (context) => const MasterControlScreen(), 
+        '/master-control': (context) => const MasterControlScreen(),
       },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (context) => const HomeScreen());
+      },
+      debugShowCheckedModeBanner: false,
     );
   }
 }

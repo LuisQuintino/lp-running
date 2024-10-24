@@ -54,7 +54,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
       _filterAthletes();
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Atleta arquivado com sucesso!')),
+      const SnackBar(content: Text('Athlete archived successfully!')),
     );
   }
 
@@ -67,7 +67,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
       _filterAthletes();
     });
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Atleta desarquivado com sucesso!')),
+      const SnackBar(content: Text('Athlete unarchived successfully!')),
     );
   }
 
@@ -109,7 +109,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
   Widget build(BuildContext context) {
     return BaseScreen(
       currentIndex: 2,
-      pageTitle: 'Atletas',
+      pageTitle: 'Athletes',
       actions: [
         IconButton(
           icon: const Icon(Icons.archive),
@@ -134,7 +134,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
-                    ),
+                      ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -164,7 +164,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
                             color: selectedAthlete == athlete['name']
                                 ? Colors.grey
                                 : Colors.white,
-                            border: Border.all(color: Colors.black),
+                            border: Border.all(color: Colors.black), // Borda preta
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -183,7 +183,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
                                         ),
                                       );
                                     },
-                                    child: const Icon(Icons.edit, color: Colors.black),
+                                    child: const Icon(Icons.edit, color: Colors.black), // Ícone editado para verde
                                   ),
                                   const SizedBox(width: 8),
                                   Text(

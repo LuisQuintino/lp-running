@@ -91,7 +91,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
   void _unarchiveCoach(int index) {
     setState(() {
       final coach = _archivedCoaches[index];
-      coach['active'] = true; // Ativa o coach ao desarquivar
+      coach['active'] = true; 
      
       coachesFuture = coachesFuture.then((coaches) => [
             ...coaches,
@@ -182,7 +182,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                        color: Theme.of(context).primaryColor,
+                         color: Colors.black,
                         width: 1,
                       ),
                     ),
@@ -227,7 +227,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                               Column(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit),
+                                    icon: const Icon(Icons.edit, color: Colors.black), 
                                     onPressed: () => _editCoach(index, coaches),
                                   ),
                                   Switch(
@@ -265,7 +265,8 @@ class _CoachListScreenState extends State<CoachListScreen> {
             right: 16,
             child: FloatingActionButton(
               onPressed: _addNewCoach,
-              child: const Icon(Icons.add),
+              backgroundColor: Colors.green, // Definindo cor de fundo verde
+              child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
         ],

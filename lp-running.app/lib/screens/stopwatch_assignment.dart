@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'stopwatch_training_type.dart'; 
+import 'stopwatch_training_type.dart';
 
 class StopwatchAssignment extends StatefulWidget {
-  final String lapTime; 
+  final String lapTime;
 
-  const StopwatchAssignment({super.key, required this.lapTime}); 
+  const StopwatchAssignment({super.key, required this.lapTime});
 
   @override
   _StopwatchAssignmentState createState() => _StopwatchAssignmentState();
@@ -28,7 +28,7 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
     super.initState();
     _stopwatch = Stopwatch();
     _startTimer();
-    _formattedTime = widget.lapTime; 
+    _formattedTime = widget.lapTime;
   }
 
   void _startTimer() {
@@ -58,15 +58,15 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
     setState(() {
       _selectedAthleteIndex = index;
     });
-    _navigateToTrainingTypeScreen(_athletes[index]['name']!); 
+    _navigateToTrainingTypeScreen(_athletes[index]['name']!);
   }
 
   void _navigateToTrainingTypeScreen(String athleteName) {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => StopwatchTrainingTypeScreen(
-          lapTime: widget.lapTime, 
-          athlete: athleteName, 
+          lapTime: widget.lapTime,
+          athlete: athleteName,
         ),
       ),
     );
@@ -78,11 +78,11 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
       appBar: AppBar(
         title: const Text(
           'Stopwatch Assignment',
-          style: TextStyle(color: Colors.white), 
+          style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.grey[850], 
+        backgroundColor: Colors.grey[850],
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white), 
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.of(context).pop();
           },
@@ -94,7 +94,6 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-           
             Container(
               margin: const EdgeInsets.only(bottom: 40),
               child: Text(
@@ -106,22 +105,19 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
                 ),
               ),
             ),
-
-            
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.grey[800], 
+                color: Colors.grey[800],
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
                   const Text(
-                    'Select Athlete', 
+                    'Select Athlete',
                     style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
-                  // Lista de Atletas
                   ..._athletes.asMap().entries.map((entry) {
                     int index = entry.key;
                     String athleteName = entry.value['name'];

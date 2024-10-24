@@ -35,7 +35,7 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
           height: 250,
           color: Colors.white,
           child: CupertinoTimerPicker(
-            mode: CupertinoTimerPickerMode.hm, 
+            mode: CupertinoTimerPickerMode.hm,
             initialTimerDuration: const Duration(hours: 0, minutes: 0),
             onTimerDurationChanged: (Duration newDuration) {
               setState(() {
@@ -118,7 +118,7 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
             ),
             const SizedBox(height: 16),
             GestureDetector(
-              onTap: () => _selectDuration(context), 
+              onTap: () => _selectDuration(context),
               child: AbsorbPointer(
                 child: TextField(
                   controller: _averageDurationController,
@@ -135,11 +135,11 @@ class _RegisterTrainingTypeScreenState extends State<RegisterTrainingTypeScreen>
               child: ElevatedButton(
                 onPressed: _registerTrainingType,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Fundo vermelho
-                  foregroundColor: Colors.white, // Texto branco
-                  side: const BorderSide(color: Colors.black, width: 1.0), // Borda preta fina
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.black, width: 1.0),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10), // Bordas arredondadas com 10 de raio
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),

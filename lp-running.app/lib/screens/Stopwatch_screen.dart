@@ -3,14 +3,14 @@ import 'dart:async';
 import 'stopwatch_assignment.dart'; 
 import '../widgets/base_screen.dart'; 
 
-class CronometroScreen extends StatefulWidget {
-  const CronometroScreen({super.key});
+class StopwatchScreen extends StatefulWidget {
+  const StopwatchScreen({super.key});
 
   @override
-  _CronometroScreenState createState() => _CronometroScreenState();
+  _StopwatchScreenState createState() => _StopwatchScreenState();
 }
 
-class _CronometroScreenState extends State<CronometroScreen> {
+class _StopwatchScreenState extends State<StopwatchScreen> {
   Timer? _timer;
   int _milliseconds = 0; 
   bool _isRunning = false;
@@ -70,10 +70,13 @@ class _CronometroScreenState extends State<CronometroScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
     return BaseScreen(
       currentIndex: 1, 
-      pageTitle: 'Cronômetro', 
-      child: SingleChildScrollView( // Adiciona rolagem ao conteúdo
+      pageTitle: 'Stopwatch', 
+      child: SingleChildScrollView( 
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start, 
@@ -83,16 +86,16 @@ class _CronometroScreenState extends State<CronometroScreen> {
                 alignment: Alignment.center,
                 children: [
                   Container(
-                    width: 200,
-                    height: 200,
+                    width: screenWidth * 0.5,
+                    height: screenWidth * 0.5,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.black, 
                     ),
                   ),
                   SizedBox(
-                    width: 200,
-                    height: 200,
+                    width: screenWidth * 0.5,
+                    height: screenWidth * 0.5,
                     child: CircularProgressIndicator(
                       value: _circleProgress,
                       strokeWidth: 12,
@@ -102,8 +105,8 @@ class _CronometroScreenState extends State<CronometroScreen> {
                   ),
                   Text(
                     _formatTime(_milliseconds),
-                    style: const TextStyle(
-                      fontSize: 40,
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.1,
                       fontWeight: FontWeight.bold,
                       color: Colors.white, 
                     ),
@@ -113,7 +116,7 @@ class _CronometroScreenState extends State<CronometroScreen> {
               const SizedBox(height: 20),
 
               Container(
-                width: 100,
+                width: screenWidth * 0.4,
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.black,
@@ -132,8 +135,8 @@ class _CronometroScreenState extends State<CronometroScreen> {
               const SizedBox(height: 20),
 
               Container(
-                width: 300,
-                height: 400, 
+                width: screenWidth * 0.85,
+                height: screenHeight * 0.4,
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   color: Colors.white,

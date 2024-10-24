@@ -115,7 +115,7 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
       appBar: AppBar(
         backgroundColor: Colors.grey[800],
         title: const Text(
-          'Registro de Atleta',
+          'Register Athlete',
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -237,13 +237,13 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
               child: ElevatedButton(
                 onPressed: _registerAthlete,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, 
-                  foregroundColor: Colors.white, 
-                  side: const BorderSide(color: Colors.black, width: 1.0), 
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.black, width: 1.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 16), 
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 child: const Text('Register'),
               ),

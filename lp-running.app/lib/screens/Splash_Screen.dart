@@ -15,15 +15,13 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   void initState() {
     super.initState();
 
-    
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
     )..forward(); 
 
-    
     Timer(const Duration(seconds: 5), () {
-      Navigator.of(context).pushReplacementNamed('/login');
+      Navigator.of(context).pushReplacementNamed('/login'); // Vai para a tela de login
     });
   }
 
@@ -46,7 +44,6 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
               height: 300,
             ),
             const SizedBox(height: 50),
-            
             AnimatedBuilder(
               animation: _animationController,
               builder: (context, child) {
