@@ -1,11 +1,8 @@
-
 const express = require('express');
 const router = express.Router();
-const CoachListScreenController = require('../Controller/CoachListScreenController'); 
-const RegisterCoachController = require('../Controller/RegisterCoachController'); 
+const CoachListScreenController = require('../Controller/CoachListScreenController');
 
-router.use('/register', RegisterCoachController);
-router.use('/update', RegisterCoachController);
-router.use('/', CoachListScreenController);
+// Endpoint para buscar todos os coaches com os dados formatados
+router.get('/', CoachListScreenController.getAllCoaches);
 
 module.exports = router;

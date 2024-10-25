@@ -12,5 +12,13 @@ const sequelize = new Sequelize('lprunning', 'lprunningadmin', '12345678', {
   },
   logging: false,
 });
+sequelize.authenticate()
+  .then(() => {
+    console.log('Conexão bem-sucedida com o banco de dados SQL Server');
+  })
+  .catch(err => {
+    console.error('Erro ao conectar ao banco de dados:', err);
+  });
+
 
 module.exports = sequelize;

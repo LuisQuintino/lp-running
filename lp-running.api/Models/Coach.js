@@ -1,44 +1,40 @@
-
 const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db');
-const bcrypt = require('bcrypt');
 
 const Coach = sequelize.define('Coach', {
-  nome: {
+  name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: false, // Campo obrigatório
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
+    unique: true, // O email deve ser único
+    validate: {
+      isEmail: true, // Validação de formato de email
+    }
   },
-  password: {
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: true, // Opcional
+  },
+  cpf: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true, // CPF deve ser único
   },
-  role: {
-    type: DataTypes.ENUM('Admin', 'Coach', 'Master'),
+  admin: {
+    type: DataTypes.BOOLEAN,
     allowNull: false,
+    defaultValue: false, // O padrão é não ser admin
   },
+  active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true, // O padrão é ser ativo
+  }
 }, {
-  timestamps: true,
+  timestamps: true, // Inclui os campos createdAt e updatedAt
 });
-
-Coach.validatePassword = async function (password, hash) {
-  return await bcrypt.compare(password, hash);
-};
-
-
-Coach.generateTemporaryPassword = function () {
-  const tempPassword = Math.random().toString(36).slice(-8); 
-  return tempPassword;
-};
-
-
-Coach.updatePassword = async function (coachId, newPassword) {
-  const hashedPassword = await bcrypt.hash(newPassword, 10); 
-  await Coach.update({ password: hashedPassword }, { where: { id: coachId } });
-};
 
 module.exports = Coach;

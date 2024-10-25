@@ -1,37 +1,20 @@
 const Coach = require('../Models/Coach');
 
-exports.getAllCoaches = async () => {
-  return await Coach.findAll({ where: { archived: false } });
-};
+exports.getCoachesData = async () => {
+  try {
+    const coaches = await Coach.findAll({
+      attributes: ['name', 'cpf', 'admin', 'active'] // Campos a serem buscados no banco
+    });
 
-exports.createCoach = async (data) => {
-  return await Coach.create(data);
-};
-
-exports.updateCoach = async (id, data) => {
-  const coach = await Coach.findByPk(id);
-  if (!coach) throw new Error('Coach não encontrado');
-  
-  Object.assign(coach, data);
-  await coach.save();
-  return coach;
-};
-
-exports.archiveCoach = async (id) => {
-  const coach = await Coach.findByPk(id);
-  if (!coach) throw new Error('Coach não encontrado');
-
-  coach.active = false;
-  coach.archived = true;
-  await coach.save();
-  return coach;
-};
-
-exports.unarchiveCoach = async (id) => {
-  const coach = await Coach.findByPk(id);
-  if (!coach) throw new Error('Coach não encontrado');
-
-  coach.archived = false;
-  await coach.save();
-  return coach;
+    // Formata os dados para incluir `accountType` e `status`
+    return coaches.map(coach => ({
+      name: coach.name,
+      cpf: coach.cpf,
+      accountType: coach.admin ? 'Admin' : 'Coach', // Define 'Admin' se admin for true, caso contrário 'Coach'
+      status: coach.active ? 'Ativo' : 'Desativado' // Define status com base no campo active
+    }));
+  } catch (error) {
+    console.error("Erro ao buscar coaches no serviço:", error.message);
+    throw new Error('Erro ao buscar coaches');
+  }
 };
