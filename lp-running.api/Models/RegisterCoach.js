@@ -2,11 +2,6 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db');
 
 const RegisterCoach = sequelize.define('RegisterCoach', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
-  },
   name: {
     type: DataTypes.STRING,
     allowNull: false
@@ -14,7 +9,10 @@ const RegisterCoach = sequelize.define('RegisterCoach', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true
+    unique: true,
+    validate: {
+      isEmail: true
+    }
   },
   phone: {
     type: DataTypes.STRING,
@@ -29,21 +27,12 @@ const RegisterCoach = sequelize.define('RegisterCoach', {
     type: DataTypes.DATEONLY,
     allowNull: true
   },
-  admin: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  active: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: true
+  role: {
+    type: DataTypes.STRING,
+    allowNull: true
   }
 }, {
-  timestamps: true, // timestamps vão mapear para os campos created_at e updated_at
-  createdAt: 'created_at',
-  updatedAt: 'updated_at',
-  tableName: 'coaches' // Especifica a tabela correta no banco de dados
+  timestamps: true
 });
 
 module.exports = RegisterCoach;

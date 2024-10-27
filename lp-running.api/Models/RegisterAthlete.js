@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db');
 
-const Coach = sequelize.define('Coach', {
+const RegisterAthlete = sequelize.define('RegisterAthlete', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -12,11 +12,7 @@ const Coach = sequelize.define('Coach', {
     unique: true,
     validate: {
       isEmail: true,
-    }
-  },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: true,
+    },
   },
   cpf: {
     type: DataTypes.STRING,
@@ -27,22 +23,29 @@ const Coach = sequelize.define('Coach', {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
-  role: {
+  observations: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  imageUrl: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  coach: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   active: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: true,
-  }
+  },
 }, {
-  tableName: 'RegisterCoaches',
+  tableName: 'RegisterAthletes',
   timestamps: true,
 });
 
-Coach.sync({ alter: true })
-  .then(() => console.log('Tabela RegisterCoaches sincronizada.'))
-  .catch(error => console.error('Erro ao sincronizar a tabela:', error));
-
-module.exports = Coach;
+module.exports = RegisterAthlete;
