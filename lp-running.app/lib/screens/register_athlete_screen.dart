@@ -7,14 +7,24 @@ class RegisterAthleteScreen extends StatefulWidget {
   final Function(String, String) onRegisterAthlete;
   final String? athleteName;
   final String? athleteImageUrl;
-  final int currentIndex;
+  final String? athleteEmail;
+  final String? athleteCpf;
+  final String? athleteDob;
+  final String? athleteObservations;
+  final String? athleteGender;
+  final String? athleteCoach;
 
   const RegisterAthleteScreen({
     super.key,
     required this.onRegisterAthlete,
     this.athleteName,
     this.athleteImageUrl,
-    this.currentIndex = 2,
+    this.athleteEmail,
+    this.athleteCpf,
+    this.athleteDob,
+    this.athleteObservations,
+    this.athleteGender,
+    this.athleteCoach,
   });
 
   @override
@@ -28,11 +38,9 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
   late TextEditingController _cpfController;
   late TextEditingController _observationsController;
   String? _imageUrl;
-
-  bool _isCpfValid = false;
-  final bool _isCpfEditable = true;
   String? _selectedGender;
   String? _selectedCoach;
+
   final List<String> _genders = [
     'Male',
     'Female',
@@ -56,12 +64,13 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.athleteName);
-    _emailController = TextEditingController();
-    _dobController = TextEditingController();
-    _cpfController = TextEditingController();
-    _observationsController = TextEditingController();
+    _emailController = TextEditingController(text: widget.athleteEmail);
+    _dobController = TextEditingController(text: widget.athleteDob);
+    _cpfController = TextEditingController(text: widget.athleteCpf);
+    _observationsController = TextEditingController(text: widget.athleteObservations);
     _imageUrl = widget.athleteImageUrl;
-    _cpfController.addListener(_validateCpf);
+    _selectedGender = widget.athleteGender;
+    _selectedCoach = widget.athleteCoach;
   }
 
   @override
@@ -72,13 +81,6 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
     _cpfController.dispose();
     _observationsController.dispose();
     super.dispose();
-  }
-
-  void _validateCpf() {
-    setState(() {
-      _isCpfValid =
-          _cpfController.text.replaceAll(RegExp(r'[^0-9]'), '').length == 11;
-    });
   }
 
   Future<void> _pickImage() async {
@@ -92,7 +94,7 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
   }
 
   void _registerAthlete() {
-    if (_nameController.text.isNotEmpty && _isCpfValid) {
+    if (_nameController.text.isNotEmpty && _cpfController.text.isNotEmpty) {
       widget.onRegisterAthlete(_nameController.text, _imageUrl ?? '');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -174,19 +176,12 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
             const SizedBox(height: 16),
             TextField(
               controller: _cpfController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 labelText: 'CPF',
-                labelStyle: TextStyle(
-                    color: _isCpfValid ? Colors.green : Colors.red),
-                border: const OutlineInputBorder(),
-                suffixIcon: Icon(
-                  _isCpfValid ? Icons.check_circle : Icons.error,
-                  color: _isCpfValid ? Colors.green : Colors.red,
-                ),
+                border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
               inputFormatters: [_cpfFormatter],
-              enabled: _isCpfEditable,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(

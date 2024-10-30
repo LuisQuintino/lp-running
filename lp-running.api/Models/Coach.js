@@ -9,10 +9,9 @@ const Coach = sequelize.define('Coach', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
     validate: {
       isEmail: true,
-    }
+    },
   },
   phone: {
     type: DataTypes.STRING,
@@ -21,28 +20,32 @@ const Coach = sequelize.define('Coach', {
   cpf: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique: true,
   },
   dob: {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
   role: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
   },
   active: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
     defaultValue: true,
-  }
+  },
 }, {
   tableName: 'RegisterCoaches',
   timestamps: true,
+  indexes: [
+    {
+      unique: true,
+      fields: ['email'],
+    },
+    {
+      unique: true,
+      fields: ['cpf'],
+    },
+  ],
 });
-
-Coach.sync({ alter: true })
-  .then(() => console.log('Tabela RegisterCoaches sincronizada.'))
-  .catch(error => console.error('Erro ao sincronizar a tabela:', error));
 
 module.exports = Coach;

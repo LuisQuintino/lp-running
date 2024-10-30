@@ -1,7 +1,7 @@
-// Controller/registerCoachController.js
 const { Op } = require('sequelize');
 const Coach = require('../Models/RegisterCoach');
 
+// Função para registrar um novo coach
 // Função para registrar um novo coach
 exports.registerCoach = async (req, res) => {
   try {
@@ -15,9 +15,7 @@ exports.registerCoach = async (req, res) => {
     });
 
     if (existingCoach) {
-      return res.status(400).json({
-        error: 'Email ou CPF já cadastrado',
-      });
+      return res.status(400).json({ error: 'Email ou CPF já cadastrado' });
     }
 
     // Se não existir, cria um novo coach
@@ -27,12 +25,98 @@ exports.registerCoach = async (req, res) => {
       phone,
       cpf,
       dob,
-      role,
+      role, // Use a coluna 'role' aqui
     });
 
     res.status(201).json(newCoach);
   } catch (error) {
     console.error("Erro ao registrar coach:", error);
     res.status(500).json({ error: 'Erro ao registrar coach', details: error.message });
+  }
+};
+exports.getAllCoaches = async (req, res) => {
+  try {
+    const coaches = await Coach.findAll({
+      attributes: ['id', 'name', 'email', 'phone', 'cpf', 'dob', 'role', 'active'], // Use 'role' ao invés de 'admin'
+    });
+    res.status(200).json(coaches);
+  } catch (error) {
+    console.error("Erro ao buscar coaches:", error);
+    res.status(500).json({ error: 'Erro ao buscar coaches', details: error.message });
+  }
+};
+
+
+// Função para buscar todos os coaches
+exports.getAllCoaches = async (req, res) => {
+  try {
+    const coaches = await Coach.findAll({
+      attributes: ['id', 'name', 'email', 'phone', 'cpf', 'dob', 'role', 'active'] // Não inclua 'admin' aqui
+    });
+    res.status(200).json(coaches);
+  } catch (error) {
+    console.error("Erro ao buscar coaches:", error);
+    res.status(500).json({ error: 'Erro ao buscar coaches', details: error.message });
+  }
+};
+
+// Função para buscar um coach por ID
+exports.getCoachById = async (req, res) => {
+  const { id } = req.params; // Pegando o ID da requisição
+  try {
+    const coach = await Coach.findByPk(id);
+    if (!coach) {
+      return res.status(404).json({ error: 'Coach não encontrado' });
+    }
+    res.status(200).json(coach);
+  } catch (error) {
+    console.error("Erro ao buscar coach:", error);
+    res.status(500).json({ error: 'Erro ao buscar coach', details: error.message });
+  }
+};
+
+// Função para atualizar um coach
+exports.updateCoach = async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  try {
+    const [updated] = await Coach.update(data, {
+      where: { id },
+      returning: true,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Coach não encontrado' });
+    }
+
+    const updatedCoach = await Coach.findByPk(id);
+    res.status(200).json(updatedCoach);
+  } catch (error) {
+    console.error("Erro ao atualizar coach:", error);
+    res.status(500).json({ error: 'Erro ao atualizar coach', details: error.message });
+  }
+};
+
+// Função para ativar ou desativar (arquivar) um coach
+exports.toggleCoachStatus = async (req, res) => {
+  const { id } = req.params;
+  const { active } = req.body;
+
+  try {
+    const [updated] = await Coach.update({ active }, {
+      where: { id },
+      returning: true,
+    });
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Coach não encontrado' });
+    }
+
+    const updatedCoach = await Coach.findByPk(id);
+    res.status(200).json(updatedCoach);
+  } catch (error) {
+    console.error("Erro ao ativar/desativar coach:", error);
+    res.status(500).json({ error: 'Erro ao ativar/desativar coach', details: error.message });
   }
 };

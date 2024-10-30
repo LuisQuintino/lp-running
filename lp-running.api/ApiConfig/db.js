@@ -3,6 +3,7 @@ const { Sequelize } = require('sequelize');
 const sequelize = new Sequelize('lprunning', 'lprunningadmin', '12345678', {
   host: 'lprunning-instance.cd2w0wswy8xz.sa-east-1.rds.amazonaws.com',
   port: 1433,
+  logging: console.log, // Ativa o log detalhado para cada consulta
   dialect: 'mssql',
   dialectOptions: {
     options: {

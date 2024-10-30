@@ -28,8 +28,8 @@ const RegisterCoach = sequelize.define('RegisterCoach', {
     allowNull: true
   },
   role: {
-    type: DataTypes.STRING,
-    allowNull: true
+    type: DataTypes.ENUM('admin', 'master', 'coach'), // Certifique-se de que isso está definido corretamente
+    allowNull: true,
   }
 }, {
   timestamps: true

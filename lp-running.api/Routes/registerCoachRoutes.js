@@ -5,5 +5,5 @@ const registerCoachController = require('../Controller/registerCoachController')
 
 // Rota para registrar um novo coach
 router.post('/register', registerCoachController.registerCoach); // Certifique-se de que a função está sendo importada corretamente
-
+router.get('/', registerCoachController.getAllCoaches);
 module.exports = router;

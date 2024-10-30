@@ -1,3 +1,4 @@
+// Athlete.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db');
 
@@ -44,8 +45,8 @@ const Athlete = sequelize.define('Athlete', {
     defaultValue: true,
   },
 }, {
-  tableName: 'athletes', 
-  timestamps: true,
+  tableName: 'athletes', // Define o nome da tabela no banco de dados
+  timestamps: true, // Cria os campos createdAt e updatedAt automaticamente
 });
 
 module.exports = Athlete;

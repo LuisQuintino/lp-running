@@ -44,8 +44,8 @@ const RegisterAthlete = sequelize.define('RegisterAthlete', {
     defaultValue: true,
   },
 }, {
-  tableName: 'RegisterAthletes',
-  timestamps: true,
+  tableName: 'athletes',
+  timestamps: false, // Remova os timestamps, se não quiser os campos createdAt e updatedAt
 });
 
 module.exports = RegisterAthlete;

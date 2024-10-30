@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/base_screen.dart';
 import 'register_coach_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CoachListScreen extends StatefulWidget {
   const CoachListScreen({super.key});
@@ -16,34 +18,28 @@ class _CoachListScreenState extends State<CoachListScreen> {
   @override
   void initState() {
     super.initState();
-    coachesFuture = fetchCoachesFromDatabase();
+    coachesFuture = fetchCoachesFromApi();
   }
 
-  Future<List<Map<String, dynamic>>> fetchCoachesFromDatabase() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return [
-      {
-        'name': 'Coach 001',
-        'email': 'coach001@example.com',
-        'role': 'Admin',
-        'active': true,
-        'archived': false,
-      },
-      {
-        'name': 'Coach 002',
-        'email': 'coach002@example.com',
-        'role': 'Coach',
-        'active': false,
-        'archived': false,
-      },
-      {
-        'name': 'Master Ramires',
-        'email': 'mastercoach@example.com',
-        'role': 'Master',
-        'active': true,
-        'archived': false,
-      },
-    ];
+  // Função para buscar os coaches diretamente da API
+  Future<List<Map<String, dynamic>>> fetchCoachesFromApi() async {
+    final url = Uri.parse('http://localhost:3000/api/coaches');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data.map((coach) {
+        return {
+          'name': coach['name'],
+          'email': coach['email'],
+          'role': coach['role'],
+          'active': coach['active'],
+          'archived': false,
+        };
+      }).toList();
+    } else {
+      throw Exception('Erro ao carregar coaches: ${response.statusCode}');
+    }
   }
 
   void _editCoach(int index, List<Map<String, dynamic>> coaches) {
@@ -68,7 +64,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
         builder: (context) => RegisterCoachScreen(
           onRegister: (newCoach) {
             setState(() {
-              coachesFuture = fetchCoachesFromDatabase();
+              coachesFuture = fetchCoachesFromApi();
             });
           },
           isEditing: false,
@@ -79,9 +75,9 @@ class _CoachListScreenState extends State<CoachListScreen> {
 
   void _archiveCoach(int index, List<Map<String, dynamic>> coaches) {
     setState(() {
-      coaches[index]['active'] = false; 
-      _archivedCoaches.add(coaches[index]); 
-      coaches.removeAt(index); 
+      coaches[index]['active'] = false;
+      _archivedCoaches.add(coaches[index]);
+      coaches.removeAt(index);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Coach arquivado e desativado com sucesso!')),
@@ -91,18 +87,14 @@ class _CoachListScreenState extends State<CoachListScreen> {
   void _unarchiveCoach(int index) {
     setState(() {
       final coach = _archivedCoaches[index];
-      coach['active'] = true; 
-     
-      coachesFuture = coachesFuture.then((coaches) => [
-            ...coaches,
-            coach,
-          ]);
-      _archivedCoaches.removeAt(index); 
+      coach['active'] = true;
+      coachesFuture = coachesFuture.then((coaches) => [...coaches, coach]);
+      _archivedCoaches.removeAt(index);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Coach desarquivado com sucesso!')),
     );
-    Navigator.of(context).pop(); 
+    Navigator.of(context).pop();
   }
 
   void _viewArchivedCoaches(BuildContext context) {
@@ -116,28 +108,11 @@ class _CoachListScreenState extends State<CoachListScreen> {
             return ListTile(
               title: Text(coach['name']),
               subtitle: Text('${coach['role']} - ${coach['email']}'),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Switch(
-                    value: coach['active'],
-                    onChanged: (bool value) {
-                      setState(() {
-                        _archivedCoaches[index]['active'] = value;
-                      });
-                    },
-                    activeColor: Colors.green,
-                    inactiveThumbColor: Colors.grey.shade400,
-                    activeTrackColor: Colors.lightGreen.shade200,
-                    inactiveTrackColor: Colors.grey.shade300,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.unarchive, color: Colors.blue),
-                    onPressed: () {
-                      _unarchiveCoach(index);
-                    },
-                  ),
-                ],
+              trailing: IconButton(
+                icon: const Icon(Icons.unarchive, color: Colors.blue),
+                onPressed: () {
+                  _unarchiveCoach(index);
+                },
               ),
             );
           },
@@ -161,7 +136,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
       ],
       child: Stack(
         children: [
-          FutureBuilder<List<Map<String, dynamic>>>( 
+          FutureBuilder<List<Map<String, dynamic>>>(
             future: coachesFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -182,7 +157,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                       side: BorderSide(
-                         color: Colors.black,
+                        color: Colors.black,
                         width: 1,
                       ),
                     ),
@@ -227,7 +202,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                               Column(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit, color: Colors.black), 
+                                    icon: const Icon(Icons.edit, color: Colors.black),
                                     onPressed: () => _editCoach(index, coaches),
                                   ),
                                   Switch(
@@ -265,7 +240,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
             right: 16,
             child: FloatingActionButton(
               onPressed: _addNewCoach,
-              backgroundColor: Colors.green, // Definindo cor de fundo verde
+              backgroundColor: Colors.green,
               child: const Icon(Icons.add, color: Colors.white),
             ),
           ),
