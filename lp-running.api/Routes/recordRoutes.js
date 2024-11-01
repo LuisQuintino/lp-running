@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Record = require('../Models/Record'); // Ajuste o caminho conforme necessário
-const Athlete = require('../Models/Aluno'); // Ajuste o caminho conforme a estrutura do seu projeto
+const Athlete = require('../Models/Athlete'); // Ajuste o caminho conforme a estrutura do seu projeto
 
 
 // Rota para exportar registros

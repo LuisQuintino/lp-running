@@ -3,16 +3,18 @@ const cors = require('cors');
 const app = express();
 const sequelize = require('./ApiConfig/db');
 const bcrypt = require('bcryptjs');
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser')
 
-const coachRoutes = require('./routes/coachRoutes');
-const registerAthleteRoutes = require('./routes/registerAthleteRoutes');
-const athleteRoutes = require('./routes/athleteRoutes');
-const registerCoachRoutes = require('./routes/registerCoachRoutes');
-const authRoutes = require('./routes/authRoutes');
-const metricasRoutes = require('./routes/metricasRoutes');
-const resetTokenRoutes = require('./routes/resetTokenRoutes');
+
+const coachRoutes = require('./Routes/coachRoutes');
+const registerAthleteRoutes = require('./Routes/registerAthleteRoutes');
+const athleteRoutes = require('./Routes/athleteRoutes');
+const registerCoachRoutes = require('./Routes/registerCoachRoutes');
+const authRoutes = require('./Routes/authRoutes');
+const metricasRoutes = require('./Routes/metricasRoutes');
+const resetTokenRoutes = require('./Routes/resetTokenRoutes');
 const coachController = require('./Controller/CoachController');
+const recordRoutes = require('./Routes/recordRoutes')
 
 app.use(cors());
 app.use(express.json());
@@ -31,6 +33,8 @@ sequelize.authenticate()
         console.error('Erro ao conectar ao banco de dados:', err);
     });
 
+// Usando as rotas
+app.use('/api/record', recordRoutes);
 app.use('/api/coaches', coachRoutes);
 app.get('/api/coaches/data', coachController.getCoachesData);
 app.put('/api/coaches/:id/status', coachController.toggleCoachStatus);

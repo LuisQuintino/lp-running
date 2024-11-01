@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db'); // Verifique se este caminho está correto
-const Aluno = require('./Aluno'); // Importando o modelo Aluno
+const Aluno = require('./Athlete'); // Importando o modelo Aluno
 
 const Record = sequelize.define('Record', {
     best_time: {
