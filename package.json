@@ -1,0 +1,15 @@
+{
+  "name": "lp-running",
+  "version": "1.0.0",
+  "description": "Aplicativo feito em parceira com a Assessoria de corrida LP Running.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lp-running": "file:"
+  }
+}
