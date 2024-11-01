@@ -1,7 +1,7 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db');
-const Aluno = require('./Aluno'); 
+const Aluno = require('./Athlete'); 
 
 const Metrica = sequelize.define('Metrica', {
   tempo: {

@@ -26,7 +26,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
   late TextEditingController _dobController;
 
   bool? _isCpfValid;
-  String? _selectedRole;
+  String? _selectedRole; // Declare a variável aqui
 
   final _cpfFormatter = MaskTextInputFormatter(mask: '###.###.###-##');
   final _dobFormatter = MaskTextInputFormatter(mask: '##/##/####');
@@ -39,7 +39,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
     _phoneController = TextEditingController(text: widget.coach?['phone'] ?? '');
     _cpfController = TextEditingController(text: widget.coach?['cpf'] ?? '');
     _dobController = TextEditingController(text: widget.coach?['dob'] ?? '');
-    _selectedRole = widget.coach?['role'];
+    _selectedRole = widget.coach?['role']; // Initialize the role if editing
     _isCpfValid = widget.isEditing ? _validateCpf(_cpfController.text) : null;
   }
 
@@ -74,8 +74,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
         !_isEmailValid(_emailController.text)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Please fill out the name, email, and CPF correctly.'),
+          content: Text('Please fill out the name, email, and CPF correctly.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -88,7 +87,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
       'phone': _phoneController.text,
       'cpf': _cpfController.text,
       'dob': _dobController.text,
-      'role': _selectedRole,
+      'role': _selectedRole, // Use the selected role here
       'active': true,
     };
 
@@ -97,7 +96,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Registration successful.'),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.green,
       ),
     );
 
@@ -155,12 +154,8 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
                   ),
                 ),
                 keyboardType: TextInputType.emailAddress,
-                onChanged: (value) {
-                  setState(() {});
-                },
               ),
-              if (!_isEmailValid(_emailController.text) &&
-                  _emailController.text.isNotEmpty)
+              if (!_isEmailValid(_emailController.text) && _emailController.text.isNotEmpty)
                 const Text(
                   'Invalid format. Use name@example.com or name@name.com.br',
                   style: TextStyle(color: Colors.red),
@@ -221,7 +216,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Center(child: Text('Admin')),
-                      value: 'Admin',
+                      value: 'admin',
                       groupValue: _selectedRole,
                       onChanged: (value) {
                         setState(() {
@@ -233,7 +228,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Center(child: Text('Coach')),
-                      value: 'Coach',
+                      value: 'coach',
                       groupValue: _selectedRole,
                       onChanged: (value) {
                         setState(() {
@@ -245,7 +240,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
                   Expanded(
                     child: RadioListTile<String>(
                       title: const Center(child: Text('Master')),
-                      value: 'Master',
+                      value: 'master',
                       groupValue: _selectedRole,
                       onChanged: (value) {
                         setState(() {
@@ -264,6 +259,7 @@ class _RegisterCoachScreenState extends State<RegisterCoachScreen> {
                     backgroundColor: Colors.red,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
+                 
                   onPressed: _registerCoach,
                   child: const Text(
                     'Register',

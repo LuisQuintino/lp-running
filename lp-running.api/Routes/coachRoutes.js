@@ -1,11 +1,8 @@
-
 const express = require('express');
 const router = express.Router();
-const CoachListScreenController = require('../Controller/CoachListScreenController'); 
-const RegisterCoachController = require('../Controller/RegisterCoachController'); 
+const coachController = require('../Controller/CoachController');
 
-router.use('/register', RegisterCoachController);
-router.use('/update', RegisterCoachController);
-router.use('/', CoachListScreenController);
+
+router.get('/', coachController.getAllCoaches);
 
 module.exports = router;

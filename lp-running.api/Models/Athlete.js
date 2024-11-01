@@ -1,7 +1,8 @@
+// Athlete.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../ApiConfig/db');
 
-const Coach = sequelize.define('Coach', {
+const Athlete = sequelize.define('Athlete', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -9,43 +10,43 @@ const Coach = sequelize.define('Coach', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
     validate: {
       isEmail: true,
     },
   },
-  phone: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
   cpf: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
   },
   dob: {
     type: DataTypes.DATEONLY,
     allowNull: true,
   },
-  role: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
+  observations: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  imageUrl: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  gender: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  coach: {
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   active: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
 }, {
-  tableName: 'coaches',
-  timestamps: true,
-  indexes: [
-    {
-      unique: true,
-      fields: ['email'],
-    },
-    {
-      unique: true,
-      fields: ['cpf'],
-    },
-  ],
+  tableName: 'athletes', 
+  timestamps: true, 
 });
 
-module.exports = Coach;
+module.exports = Athlete;

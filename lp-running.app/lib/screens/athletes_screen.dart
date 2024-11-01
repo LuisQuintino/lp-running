@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'register_athlete_screen.dart';
 import 'race_details_screen.dart';
 import '../widgets/base_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AthletesScreen extends StatefulWidget {
   const AthletesScreen({super.key});
@@ -20,13 +22,32 @@ class _AthletesScreenState extends State<AthletesScreen> {
   @override
   void initState() {
     super.initState();
-    athletes = [
-      {'name': 'Dona Maria', 'active': true, 'archived': false},
-      {'name': 'João Silva', 'active': false, 'archived': false},
-      {'name': 'Maria Clara', 'active': true, 'archived': false},
-    ];
-    filteredAthletes = List.from(athletes);
+    fetchAthletes();
     searchController.addListener(_filterAthletes);
+  }
+
+  Future<void> fetchAthletes() async {
+    final url = Uri.parse('http://localhost:3000/api/athletes');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      setState(() {
+        athletes = data.map((athlete) {
+          return {
+            'name': athlete['name'],
+            'active': athlete['active'],
+            'archived': false,
+          };
+        }).toList();
+        filteredAthletes = List.from(athletes);
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Erro ao carregar atletas: ${response.statusCode}')),
+      );
+    }
   }
 
   void _filterAthletes() {
@@ -71,33 +92,85 @@ class _AthletesScreenState extends State<AthletesScreen> {
     );
   }
 
-  void _viewArchivedAthletes(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: _archivedAthletes.length,
-          itemBuilder: (context, index) {
-            final athlete = _archivedAthletes[index];
-            return ListTile(
-              title: Text(athlete['name']),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.unarchive, color: Colors.blue),
-                    onPressed: () {
-                      _unarchiveAthlete(index);
+void _viewArchivedAthletes(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        children: [
+          
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[800],
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)), 
+            ),
+            child: const Text(
+              'Archived Athletes',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          // Conteúdo da lista ou mensagem vazia
+          Expanded(
+            child: _archivedAthletes.isEmpty
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)), // Cantos arredondados na parte inferior
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'No archived athletes',
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _archivedAthletes.length,
+                    itemBuilder: (context, index) {
+                      final athlete = _archivedAthletes[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12), // Cantos arredondados para cada item
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3), // Sombra para efeito
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          title: Text(athlete['name']),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.unarchive, color: Colors.blue),
+                            onPressed: () {
+                              _unarchiveAthlete(index);
+                            },
+                          ),
+                        ),
+                      );
                     },
                   ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   void dispose() {
@@ -134,7 +207,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                       borderSide: BorderSide.none,
-                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -152,7 +225,8 @@ class _AthletesScreenState extends State<AthletesScreen> {
                             MaterialPageRoute(
                               builder: (context) => RaceDetailsScreen(
                                 athleteName: athlete['name'],
-                                imageUrl: 'https://example.com/athlete_image.png',
+                                imageUrl:
+                                    'https://example.com/athlete_image.png',
                               ),
                             ),
                           );
@@ -164,7 +238,7 @@ class _AthletesScreenState extends State<AthletesScreen> {
                             color: selectedAthlete == athlete['name']
                                 ? Colors.grey
                                 : Colors.white,
-                            border: Border.all(color: Colors.black), // Borda preta
+                            border: Border.all(color: Colors.black),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -176,14 +250,16 @@ class _AthletesScreenState extends State<AthletesScreen> {
                                     onTap: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                          builder: (context) => RegisterAthleteScreen(
+                                          builder: (context) =>
+                                              RegisterAthleteScreen(
                                             onRegisterAthlete: _addNewAthlete,
                                             athleteName: athlete['name'],
                                           ),
                                         ),
                                       );
                                     },
-                                    child: const Icon(Icons.edit, color: Colors.black), // Ícone editado para verde
+                                    child: const Icon(Icons.edit,
+                                        color: Colors.black),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
@@ -201,16 +277,19 @@ class _AthletesScreenState extends State<AthletesScreen> {
                                     value: athlete['active'],
                                     onChanged: (bool value) {
                                       setState(() {
-                                        filteredAthletes[index]['active'] = value;
+                                        filteredAthletes[index]['active'] =
+                                            value;
                                       });
                                     },
                                     activeColor: Colors.green,
                                     inactiveThumbColor: Colors.grey.shade400,
-                                    activeTrackColor: Colors.lightGreen.shade200,
+                                    activeTrackColor:
+                                        Colors.lightGreen.shade200,
                                     inactiveTrackColor: Colors.grey.shade300,
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.archive, color: Colors.blue),
+                                    icon: const Icon(Icons.archive,
+                                        color: Colors.blue),
                                     onPressed: () {
                                       _archiveAthlete(index);
                                     },
