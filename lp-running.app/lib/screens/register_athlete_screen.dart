@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class RegisterAthleteScreen extends StatefulWidget {
   final Function(String, String) onRegisterAthlete;
@@ -40,6 +42,7 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
   String? _imageUrl;
   String? _selectedGender;
   String? _selectedCoach;
+  List<String> _coaches = [];
 
   final List<String> _genders = [
     'Male',
@@ -47,12 +50,6 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
     'Non-binary',
     'Prefer not to say',
     'Other'
-  ];
-
-  final List<String> _coaches = [
-    'Coach A',
-    'Coach B',
-    'Coach C'
   ];
 
   final MaskTextInputFormatter _dateFormatter =
@@ -67,10 +64,38 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
     _emailController = TextEditingController(text: widget.athleteEmail);
     _dobController = TextEditingController(text: widget.athleteDob);
     _cpfController = TextEditingController(text: widget.athleteCpf);
-    _observationsController = TextEditingController(text: widget.athleteObservations);
+    _observationsController =
+        TextEditingController(text: widget.athleteObservations);
     _imageUrl = widget.athleteImageUrl;
     _selectedGender = widget.athleteGender;
     _selectedCoach = widget.athleteCoach;
+
+    _fetchCoaches();
+  }
+
+  Future<void> _fetchCoaches() async {
+    try {
+      final response = await http.get(Uri.parse('http://localhost:3000/api/coaches'));
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = jsonDecode(response.body);
+        setState(() {
+          _coaches = data
+              .where((coach) => coach['active'] == true)
+              .map<String>((coach) => coach['name'] as String)
+              .toList();
+        });
+      } else {
+        throw Exception('Erro ao carregar coaches');
+      }
+    } catch (error) {
+      print("Erro ao buscar coaches: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro ao carregar coaches. Verifique a conexão.'),
+        ),
+      );
+    }
   }
 
   @override
@@ -84,8 +109,7 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _imageUrl = pickedFile.path;
@@ -192,7 +216,9 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
               value: _selectedGender,
               items: _genders
                   .map((gender) => DropdownMenuItem(
-                      value: gender, child: Text(gender)))
+                        value: gender,
+                        child: Text(gender),
+                      ))
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -207,10 +233,11 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
                 border: OutlineInputBorder(),
               ),
               value: _selectedCoach,
-              items: _coaches
-                  .map((coach) => DropdownMenuItem(
-                      value: coach, child: Text(coach)))
-                  .toList(),
+              items: _coaches.isEmpty
+                  ? [const DropdownMenuItem(value: null, child: Text("No active coaches"))]
+                  : _coaches
+                      .map((coach) => DropdownMenuItem(value: coach, child: Text(coach)))
+                      .toList(),
               onChanged: (value) {
                 setState(() {
                   _selectedCoach = value;

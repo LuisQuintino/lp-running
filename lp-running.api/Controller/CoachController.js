@@ -1,11 +1,11 @@
-// Controller/coachController.js
+
 const Coach = require('../Models/Coach');
 
-// Função para buscar todos os coaches (com campos específicos)
+
 exports.getAllCoaches = async (req, res) => {
   try {
     const coaches = await Coach.findAll({
-      attributes: ['id', 'name', 'email', 'phone', 'role', 'active'] // Campos retornados
+      attributes: ['id', 'name', 'email', 'phone', 'role', 'active'] 
     });
     res.status(200).json(coaches);
   } catch (error) {
@@ -14,7 +14,7 @@ exports.getAllCoaches = async (req, res) => {
   }
 };
 
-// Função para buscar dados específicos dos coaches (dados mais detalhados)
+
 exports.getCoachesData = async (req, res) => {
   try {
     const coaches = await Coach.findAll({
@@ -24,7 +24,7 @@ exports.getCoachesData = async (req, res) => {
     const coachesData = coaches.map(coach => ({
       name: coach.name,
       cpf: coach.cpf,
-      accountType: coach.role === 'Admin' ? 'Admin' : coach.role, // Define tipo de conta
+      accountType: coach.role === 'Admin' ? 'Admin' : coach.role, 
       status: coach.active ? 'Ativo' : 'Desativado'
     }));
 
@@ -35,7 +35,7 @@ exports.getCoachesData = async (req, res) => {
   }
 };
 
-// Função para atualizar o status (ativar/desativar) de um coach
+
 exports.toggleCoachStatus = async (req, res) => {
   const { id } = req.params;
   const { active } = req.body;
@@ -58,7 +58,7 @@ exports.toggleCoachStatus = async (req, res) => {
   }
 };
 
-// Função para arquivar/desarquivar coach
+
 exports.archiveCoach = async (req, res) => {
   const { id } = req.params;
   try {
@@ -67,7 +67,7 @@ exports.archiveCoach = async (req, res) => {
       return res.status(404).json({ error: 'Coach não encontrado' });
     }
 
-    // Alterna o estado de arquivamento
+    
     coach.active = !coach.active;
     await coach.save();
 

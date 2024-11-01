@@ -72,7 +72,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-
+    final double circleSize = screenWidth * 0.4;  
     return BaseScreen(
       currentIndex: 1, 
       pageTitle: 'Stopwatch', 
@@ -86,19 +86,19 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                 alignment: Alignment.center,
                 children: [
                   Container(
-                    width: screenWidth * 0.5,
-                    height: screenWidth * 0.5,
+                    width: circleSize,
+                    height: circleSize,
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.black, 
                     ),
                   ),
                   SizedBox(
-                    width: screenWidth * 0.5,
-                    height: screenWidth * 0.5,
+                    width: circleSize,
+                    height: circleSize,
                     child: CircularProgressIndicator(
                       value: _circleProgress,
-                      strokeWidth: 12,
+                      strokeWidth: 8,  
                       valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
                       backgroundColor: Colors.black,
                     ),
@@ -106,7 +106,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                   Text(
                     _formatTime(_milliseconds),
                     style: TextStyle(
-                      fontSize: screenWidth * 0.1,
+                      fontSize: screenWidth * 0.08,
                       fontWeight: FontWeight.bold,
                       color: Colors.white, 
                     ),
@@ -116,7 +116,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
               const SizedBox(height: 20),
 
               Container(
-                width: screenWidth * 0.4,
+                width: screenWidth * 0.6,
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: Colors.black,
@@ -126,7 +126,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                   child: Text(
                     'Laps',
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: 20,
                       color: Colors.white,
                     ),
                   ),

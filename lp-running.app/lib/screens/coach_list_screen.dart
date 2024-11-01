@@ -21,7 +21,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
     coachesFuture = fetchCoachesFromApi();
   }
 
-  // Função para buscar os coaches diretamente da API
+ 
   Future<List<Map<String, dynamic>>> fetchCoachesFromApi() async {
     final url = Uri.parse('http://localhost:3000/api/coaches');
     final response = await http.get(url);
@@ -101,21 +101,76 @@ class _CoachListScreenState extends State<CoachListScreen> {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: _archivedCoaches.length,
-          itemBuilder: (context, index) {
-            final coach = _archivedCoaches[index];
-            return ListTile(
-              title: Text(coach['name']),
-              subtitle: Text('${coach['role']} - ${coach['email']}'),
-              trailing: IconButton(
-                icon: const Icon(Icons.unarchive, color: Colors.blue),
-                onPressed: () {
-                  _unarchiveCoach(index);
-                },
+        return Column(
+          children: [
+            // Barra de título com cantos arredondados
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.grey[800],
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)), 
               ),
-            );
-          },
+              child: const Text(
+                'Archived Coaches',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            // Conteúdo da lista ou mensagem vazia
+            Expanded(
+              child: _archivedCoaches.isEmpty
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)), 
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'No archived coaches',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      itemCount: _archivedCoaches.length,
+                      itemBuilder: (context, index) {
+                        final coach = _archivedCoaches[index];
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12), 
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3), 
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Text(coach['name']),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.unarchive, color: Colors.blue),
+                              onPressed: () {
+                                _unarchiveCoach(index);
+                              },
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
         );
       },
     );
@@ -156,7 +211,7 @@ class _CoachListScreenState extends State<CoachListScreen> {
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
+                      side: const BorderSide(
                         color: Colors.black,
                         width: 1,
                       ),

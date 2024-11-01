@@ -1,9 +1,9 @@
-// registerAthleteRoutes.js
 const express = require('express');
 const router = express.Router();
-const registerAthleteController = require('../Controller/registerAthleteController'); // Verifique o caminho correto
+const registerAthleteController = require('../Controller/registerAthleteController');
 
-// Rota para registrar um novo atleta
-router.post('/register', registerAthleteController.registerAthlete);
+// Define a rota POST para registrar um atleta
+router.post('/', registerAthleteController.registerAthlete);
+
 
 module.exports = router;

@@ -92,28 +92,85 @@ class _AthletesScreenState extends State<AthletesScreen> {
     );
   }
 
-  void _viewArchivedAthletes(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return ListView.builder(
-          itemCount: _archivedAthletes.length,
-          itemBuilder: (context, index) {
-            final athlete = _archivedAthletes[index];
-            return ListTile(
-              title: Text(athlete['name']),
-              trailing: IconButton(
-                icon: const Icon(Icons.unarchive, color: Colors.blue),
-                onPressed: () {
-                  _unarchiveAthlete(index);
-                },
+void _viewArchivedAthletes(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Column(
+        children: [
+          
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey[800],
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)), 
+            ),
+            child: const Text(
+              'Archived Athletes',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
               ),
-            );
-          },
-        );
-      },
-    );
-  }
+              textAlign: TextAlign.center,
+            ),
+          ),
+          // Conteúdo da lista ou mensagem vazia
+          Expanded(
+            child: _archivedAthletes.isEmpty
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)), // Cantos arredondados na parte inferior
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'No archived athletes',
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: _archivedAthletes.length,
+                    itemBuilder: (context, index) {
+                      final athlete = _archivedAthletes[index];
+                      return Container(
+                        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12), // Cantos arredondados para cada item
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: Offset(0, 3), // Sombra para efeito
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          title: Text(athlete['name']),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.unarchive, color: Colors.blue),
+                            onPressed: () {
+                              _unarchiveAthlete(index);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 
   @override
   void dispose() {

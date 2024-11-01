@@ -34,7 +34,7 @@ const Coach = sequelize.define('Coach', {
     defaultValue: true,
   },
 }, {
-  tableName: 'RegisterCoaches',
+  tableName: 'coaches',
   timestamps: true,
   indexes: [
     {

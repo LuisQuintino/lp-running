@@ -1,13 +1,10 @@
-// registerAthleteController.js
 const { Op } = require('sequelize');
-const RegisterAthlete = require('../models/RegisterAthlete'); // Confirme que o caminho está correto
+const RegisterAthlete = require('../Models/RegisterAthlete');
 
-// Função para registrar um novo atleta
 exports.registerAthlete = async (req, res) => {
   try {
     const { name, email, cpf, dob, observations, imageUrl, gender, coach, active } = req.body;
 
-    // Verificar se o atleta já existe
     const existingAthlete = await RegisterAthlete.findOne({
       where: {
         [Op.or]: [{ email }, { cpf }],
@@ -18,7 +15,6 @@ exports.registerAthlete = async (req, res) => {
       return res.status(400).json({ error: 'Email ou CPF já cadastrado' });
     }
 
-    // Criar novo atleta
     const newAthlete = await RegisterAthlete.create({
       name,
       email,
@@ -31,9 +27,26 @@ exports.registerAthlete = async (req, res) => {
       active,
     });
 
-    res.status(201).json(newAthlete);
+    res.status(201).json({ message: 'Atleta registrado com sucesso!', athlete: newAthlete });
   } catch (error) {
     console.error("Erro ao registrar atleta:", error);
     res.status(500).json({ error: 'Erro ao registrar atleta', details: error.message });
+  }
+};
+
+
+exports.getAthleteById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const athlete = await RegisterAthlete.findByPk(id);
+
+    if (!athlete) {
+      return res.status(404).json({ error: 'Atleta não encontrado' });
+    }
+
+    res.status(200).json({ athlete });
+  } catch (error) {
+    console.error("Erro ao buscar atleta:", error);
+    res.status(500).json({ error: 'Erro ao buscar atleta', details: error.message });
   }
 };

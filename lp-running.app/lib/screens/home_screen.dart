@@ -20,16 +20,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  String _coachName = "Find a Bug 😉"; //substituir pela pessoa logada
+  String _coachName = "Find a Bug 😉";
 
   @override
   void initState() {
     super.initState();
-    _fetchUserName(); // Função para buscar o nome do usuário no bd
+    _fetchUserName(); 
   }
 
   void _fetchUserName() async {
-    // TODO: Adicione o código de conexão ao db aqui
+    
   
   }
 

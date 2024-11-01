@@ -32,7 +32,8 @@ const RegisterCoach = sequelize.define('RegisterCoach', {
     allowNull: true,
   }
 }, {
-  timestamps: true
+  tableName: 'coaches',
+  timestamps: false, // Remova os timestamps, se não quiser os campos createdAt e updatedAt
 });
 
 module.exports = RegisterCoach;

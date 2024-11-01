@@ -45,8 +45,8 @@ const Athlete = sequelize.define('Athlete', {
     defaultValue: true,
   },
 }, {
-  tableName: 'athletes', // Define o nome da tabela no banco de dados
-  timestamps: true, // Cria os campos createdAt e updatedAt automaticamente
+  tableName: 'athletes', 
+  timestamps: true, 
 });
 
 module.exports = Athlete;
