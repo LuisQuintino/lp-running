@@ -4,15 +4,15 @@ import 'stopwatch_training_type.dart';
 
 class StopwatchAssignment extends StatefulWidget {
   final String lapTime;
+  final String athleteName;
 
-  const StopwatchAssignment({super.key, required this.lapTime});
+  const StopwatchAssignment({super.key, required this.lapTime, required this.athleteName});
 
   @override
   _StopwatchAssignmentState createState() => _StopwatchAssignmentState();
 }
 
 class _StopwatchAssignmentState extends State<StopwatchAssignment> {
-  late Stopwatch _stopwatch;
   late Timer _timer;
   String _formattedTime = '00:00:00';
   int? _selectedAthleteIndex;
@@ -26,32 +26,7 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
   @override
   void initState() {
     super.initState();
-    _stopwatch = Stopwatch();
-    _startTimer();
     _formattedTime = widget.lapTime;
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_stopwatch.isRunning) {
-        setState(() {
-          _formattedTime = _formatElapsedTime(_stopwatch.elapsed);
-        });
-      }
-    });
-  }
-
-  String _formatElapsedTime(Duration elapsed) {
-    String hours = (elapsed.inHours).toString().padLeft(2, '0');
-    String minutes = (elapsed.inMinutes % 60).toString().padLeft(2, '0');
-    String seconds = (elapsed.inSeconds % 60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$seconds';
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
   }
 
   void _assignAthlete(int index) {
@@ -76,8 +51,8 @@ class _StopwatchAssignmentState extends State<StopwatchAssignment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Stopwatch Assignment',
+        title: Text(
+          'Assignment for ${widget.athleteName}',
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.grey[850],

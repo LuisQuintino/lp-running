@@ -3,22 +3,28 @@ import 'Stopwatch_screen.dart';
 
 class StopwatchTrainingTypeScreen extends StatefulWidget {
   final String lapTime;
-  final String athlete;
+  final List<String> athletes;
 
-  const StopwatchTrainingTypeScreen({super.key, required this.lapTime, required this.athlete});
+  const StopwatchTrainingTypeScreen({
+    super.key,
+    required this.lapTime,
+    required this.athletes,
+  });
 
   @override
-  _StopwatchTrainingTypeScreenState createState() => _StopwatchTrainingTypeScreenState();
+  _StopwatchTrainingTypeScreenState createState() =>
+      _StopwatchTrainingTypeScreenState();
 }
 
-class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScreen> {
+class _StopwatchTrainingTypeScreenState
+    extends State<StopwatchTrainingTypeScreen> {
   int? _selectedTrainingIndex;
   final List<String> _trainingOptions = [
     '100 to 200 meters',
     '300 to 400 meters',
     '400 to 500 meters',
   ];
-  final bool _isLoading = false;
+  bool _isLoading = false;
 
   void _confirmTrainingSelection() {
     if (_selectedTrainingIndex != null) {
@@ -28,10 +34,16 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
 
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (context) => const StopwatchScreen()), // Corrigido aqui
+          MaterialPageRoute(
+              builder: (context) =>
+                  StopwatchScreen(athletesWithCheckIn: [])), // Lista vazia
           (Route<dynamic> route) => false,
         );
       });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Selecione uma opção de treino")),
+      );
     }
   }
 
@@ -77,13 +89,8 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    widget.athlete,
-                    style: const TextStyle(fontSize: 24, color: Colors.white),
-                  ),
-                  const SizedBox(height: 16),
                   const Text(
-                    'Choose Completed Training',
+                    'Choose Completed Training for Athletes',
                     style: TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   const SizedBox(height: 16),
@@ -111,7 +118,8 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
                                   child: Text(
                                     trainingType,
                                     style: TextStyle(
-                                      color: isSelected ? Colors.white : Colors.black,
+                                      color:
+                                          isSelected ? Colors.white : Colors.black,
                                       fontSize: 18,
                                     ),
                                   ),
@@ -121,6 +129,25 @@ class _StopwatchTrainingTypeScreenState extends State<StopwatchTrainingTypeScree
                           }).toList(),
                         ),
                 ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: ListView.builder(
+                itemCount: widget.athletes.length,
+                itemBuilder: (context, index) {
+                  final athlete = widget.athletes[index];
+                  return ListTile(
+                    title: Text(
+                      athlete,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                    subtitle: Text(
+                      'Lap Time: ${widget.lapTime}',
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 20),
