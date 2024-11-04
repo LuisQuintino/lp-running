@@ -49,6 +49,9 @@ class _BaseScreenState extends State<BaseScreen> {
       case 6:
         route = '/master-control';
         break;
+      case 7: 
+        route = '/athlete-check-in';
+        break;
       default:
         route = '/home';
     }
@@ -120,6 +123,8 @@ class _BaseScreenState extends State<BaseScreen> {
           _buildMenuOption(Icons.construction, 'Coaches', 4),
           _buildMenuOption(Icons.directions_run, 'Training Types', 5),
           _buildMenuOption(Icons.settings, 'Access Control', 6),
+          _buildMenuOption(Icons.check, 'Check-in', 7), 
+          
           const Divider(),
           ListTile(
             leading: const Icon(Icons.exit_to_app, color: Colors.red),

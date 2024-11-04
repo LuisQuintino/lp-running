@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'stopwatch_assignment.dart'; 
-import '../widgets/base_screen.dart'; 
+import 'stopwatch_training_type.dart';
+import '../widgets/base_screen.dart';
 
 class StopwatchScreen extends StatefulWidget {
-  const StopwatchScreen({super.key});
+  final List<String> athletesWithCheckIn;
+
+  const StopwatchScreen({super.key, required this.athletesWithCheckIn});
 
   @override
   _StopwatchScreenState createState() => _StopwatchScreenState();
@@ -12,20 +14,33 @@ class StopwatchScreen extends StatefulWidget {
 
 class _StopwatchScreenState extends State<StopwatchScreen> {
   Timer? _timer;
-  int _milliseconds = 0; 
+  int _milliseconds = 0;
   bool _isRunning = false;
-  final List<String> _lapTimes = [];
-  double _circleProgress = 0.0; 
+  double _progressValue = 0.0;
+  Map<String, String> _athleteLapTimes = {};
+  Map<String, List<String>> _lapsPerAthlete = {};
+  Map<String, bool> _athleteChecked = {};
+  Map<String, bool> _selectedAthletes = {};
+
+  @override
+  void initState() {
+    super.initState();
+    for (var athlete in widget.athletesWithCheckIn) {
+      _athleteChecked[athlete] = false;
+      _lapsPerAthlete[athlete] = [];
+      _selectedAthletes[athlete] = false;
+    }
+  }
 
   void _startStopTimer() {
     if (_isRunning) {
       _timer?.cancel();
     } else {
       _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
-        if (mounted) { 
+        if (mounted) {
           setState(() {
-            _milliseconds += 10; 
-            _circleProgress = (_milliseconds % 60000) / 60000; 
+            _milliseconds += 10;
+            _progressValue = (_milliseconds % 60000) / 60000;
           });
         }
       });
@@ -40,169 +55,226 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
       _timer?.cancel();
       _milliseconds = 0;
       _isRunning = false;
-      _lapTimes.clear();
-      _circleProgress = 0.0; 
-    });
-  }
-
-  void _addLapTime() {
-    final formattedTime = _formatTime(_milliseconds);
-    setState(() {
-      _lapTimes.add(formattedTime); 
-      _circleProgress = 0.0; 
+      _progressValue = 0.0;
+      _athleteLapTimes.clear();
+      for (var athlete in _athleteChecked.keys) {
+        _athleteChecked[athlete] = false;
+        _lapsPerAthlete[athlete]?.clear();
+        _selectedAthletes[athlete] = false;
+      }
     });
   }
 
   String _formatTime(int milliseconds) {
-    final int centiseconds = (milliseconds % 1000) ~/ 10; 
-    final int minutes = (milliseconds ~/ 60000) % 60; 
-    final int hours = (milliseconds ~/ 3600000); 
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${centiseconds.toString().padLeft(2, '0')}';
+    final int centiseconds = (milliseconds % 1000) ~/ 10;
+    final int seconds = (milliseconds ~/ 1000) % 60;
+    final int minutes = (milliseconds ~/ 60000) % 60;
+    final int hours = milliseconds ~/ 3600000;
+
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${centiseconds.toString().padLeft(2, '0')}';
   }
 
-  void _assignAthlete(String lap) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => StopwatchAssignment(lapTime: lap),
-      ),
-    );
+  void _markTimeForAthlete(String athlete) {
+    final formattedTime = _formatTime(_milliseconds);
+    setState(() {
+      _athleteLapTimes[athlete] = formattedTime;
+      _athleteChecked[athlete] = true;
+      _lapsPerAthlete[athlete]?.add(formattedTime);
+    });
+  }
+
+  void _navigateToTrainingType() {
+    List<String> selectedAthletes = _selectedAthletes.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+
+    if (selectedAthletes.isNotEmpty) {
+      final lapTime = _formatTime(_milliseconds);
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => StopwatchTrainingTypeScreen(
+            lapTime: lapTime,
+            athletes: selectedAthletes,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Por favor, selecione pelo menos um atleta")),
+      );
+    }
+  }
+
+  void _removeLapsForAthlete(String athlete) {
+    setState(() {
+      _lapsPerAthlete[athlete]?.clear();
+      _athleteChecked[athlete] = false;
+      _selectedAthletes[athlete] = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double circleSize = screenWidth * 0.4;  
+    final double rectangleWidth = screenWidth * 0.8;
+    final double rectangleHeight = screenHeight * 0.2;
+
     return BaseScreen(
-      currentIndex: 1, 
-      pageTitle: 'Stopwatch', 
-      child: SingleChildScrollView( 
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start, 
-            children: [
-              const SizedBox(height: 20), 
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    width: circleSize,
-                    height: circleSize,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.black, 
+      currentIndex: 1,
+      pageTitle: 'Stopwatch',
+      child: Container(
+        color: Colors.grey[200],
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: rectangleWidth,
+                      height: rectangleHeight,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: circleSize,
-                    height: circleSize,
-                    child: CircularProgressIndicator(
-                      value: _circleProgress,
-                      strokeWidth: 8,  
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
-                      backgroundColor: Colors.black,
+                    Positioned(
+                      top: 0,
+                      child: Container(
+                        width: rectangleWidth * _progressValue,
+                        height: 8,
+                        color: Colors.red,
+                      ),
                     ),
-                  ),
-                  Text(
-                    _formatTime(_milliseconds),
-                    style: TextStyle(
-                      fontSize: screenWidth * 0.08,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white, 
+                    Text(
+                      _formatTime(_milliseconds),
+                      style: TextStyle(
+                        fontSize: rectangleHeight * 0.4,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              Container(
-                width: screenWidth * 0.6,
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  borderRadius: BorderRadius.circular(10),
+                  ],
                 ),
-                child: const Center(
-                  child: Text(
-                    'Laps',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+                const SizedBox(height: 20),
+                Container(
+                  width: screenWidth * 0.6,
+                  padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Laps',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              Container(
-                width: screenWidth * 0.85,
-                height: screenHeight * 0.4,
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center, 
-                    children: [
-                      for (var i = 0; i < _lapTimes.length; i++)
-                        Container(
-                          width: double.infinity, 
-                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6), 
-                          margin: const EdgeInsets.only(bottom: 8),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.red, width: 2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween, 
-                            children: [
-                              Text(
-                                '${i + 1}. ${_lapTimes[i]}',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.arrow_forward,
-                                  size: 24, 
-                                  color: Colors.red, 
+                const SizedBox(height: 20),
+                Container(
+                  width: screenWidth * 0.85,
+                  height: screenHeight * 0.4,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.black, width: 2),
+                  ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        for (var athlete in widget.athletesWithCheckIn)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 6),
+                            margin: const EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.red, width: 2),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Checkbox(
+                                  value: _selectedAthletes[athlete],
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      _selectedAthletes[athlete] = value ?? false;
+                                    });
+                                  },
+                                  activeColor: Colors.green,
                                 ),
-                                onPressed: () => _assignAthlete(_lapTimes[i]),
-                              ),
-                            ],
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () => _markTimeForAthlete(athlete),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          athlete,
+                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                        ),
+                                        ...?_lapsPerAthlete[athlete]?.asMap().entries.map((entry) {
+                                          int lapNumber = entry.key + 1;
+                                          String lapTime = entry.value;
+                                          return Text(
+                                            'Volta $lapNumber: $lapTime',
+                                            style: const TextStyle(fontSize: 14),
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.grey),
+                                  onPressed: () => _removeLapsForAthlete(athlete),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30), 
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.check_circle, size: 40, color: Colors.green),
-                    onPressed: _addLapTime,
-                  ),
-                  FloatingActionButton(
-                    onPressed: _startStopTimer,
-                    backgroundColor: Colors.red,
-                    child: Icon(
-                      _isRunning ? Icons.pause : Icons.play_arrow, 
-                      size: 30,
-                      color: Colors.black, 
+                      ],
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, size: 40, color: Colors.black), 
-                    onPressed: _resetTimer,
-                  ),
-                ],
-              ),
-            ],
+                ),
+                const SizedBox(height: 30),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.check_circle, size: 40, color: Colors.blue),
+                      onPressed: _navigateToTrainingType,
+                    ),
+                    FloatingActionButton(
+                      onPressed: _startStopTimer,
+                      backgroundColor: Colors.red,
+                      child: Icon(
+                        _isRunning ? Icons.pause : Icons.play_arrow,
+                        size: 30,
+                        color: Colors.black,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, size: 40, color: Colors.black),
+                      onPressed: _resetTimer,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
