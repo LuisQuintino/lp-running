@@ -16,6 +16,7 @@ class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
   List<String> _checkedInAthletes = []; 
   List<String> _filteredAthletes = [];
   List<String> _confirmedAthletes = []; 
+
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,6 @@ class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
-          // Converte o JSON da resposta em uma lista de nomes
           _checkedInAthletes = data.map((athlete) => athlete['name'].toString()).toList();
           _filteredAthletes = List.from(_checkedInAthletes);
         });
@@ -67,7 +67,7 @@ class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => StopwatchScreen(
-          athletesWithCheckIn: _confirmedAthletes, s
+          athletesWithCheckIn: _confirmedAthletes,
         ),
       ),
     );

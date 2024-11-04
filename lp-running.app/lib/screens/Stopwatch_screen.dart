@@ -101,7 +101,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Por favor, selecione pelo menos um atleta")),
+        const SnackBar(content: Text("Please select at least one athlete")),
       );
     }
   }
@@ -231,7 +231,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                                           int lapNumber = entry.key + 1;
                                           String lapTime = entry.value;
                                           return Text(
-                                            'Volta $lapNumber: $lapTime',
+                                            'Lap $lapNumber: $lapTime',
                                             style: const TextStyle(fontSize: 14),
                                           );
                                         }),
