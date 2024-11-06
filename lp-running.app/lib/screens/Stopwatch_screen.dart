@@ -2,11 +2,19 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'stopwatch_training_type.dart';
 import '../widgets/base_screen.dart';
+import 'athlete_check_in_screen.dart';
 
 class StopwatchScreen extends StatefulWidget {
   final List<String> athletesWithCheckIn;
+  final Map<String, List<String>> lapsPerAthlete;
+  final bool showAthleteCheckInPopup;
 
-  const StopwatchScreen({super.key, required this.athletesWithCheckIn});
+  const StopwatchScreen({
+    super.key,
+    required this.athletesWithCheckIn,
+    this.lapsPerAthlete = const {},
+    this.showAthleteCheckInPopup = true,
+  });
 
   @override
   _StopwatchScreenState createState() => _StopwatchScreenState();
@@ -18,17 +26,29 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
   bool _isRunning = false;
   double _progressValue = 0.0;
   Map<String, String> _athleteLapTimes = {};
-  Map<String, List<String>> _lapsPerAthlete = {};
+  late Map<String, List<String>> _lapsPerAthlete;
   Map<String, bool> _athleteChecked = {};
   Map<String, bool> _selectedAthletes = {};
 
   @override
   void initState() {
     super.initState();
+    // Inicializa os atletas
+    _lapsPerAthlete = Map<String, List<String>>.from(widget.lapsPerAthlete);
     for (var athlete in widget.athletesWithCheckIn) {
       _athleteChecked[athlete] = false;
-      _lapsPerAthlete[athlete] = [];
+      _lapsPerAthlete[athlete] ??= [];
       _selectedAthletes[athlete] = false;
+    }
+
+    // Se deve mostrar o popup de seleção de atletas
+    if (widget.showAthleteCheckInPopup) {
+      // Adiciona um pequeno atraso antes de chamar o popup para garantir que a UI esteja pronta
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _showAthleteCheckInDialog();
+        });
+      });
     }
   }
 
@@ -90,12 +110,10 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
         .toList();
 
     if (selectedAthletes.isNotEmpty) {
-      final lapTime = _formatTime(_milliseconds);
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) => StopwatchTrainingTypeScreen(
-            lapTime: lapTime,
-            athletes: selectedAthletes,
+            lapsPerAthlete: _lapsPerAthlete,
           ),
         ),
       );
@@ -112,6 +130,27 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
       _athleteChecked[athlete] = false;
       _selectedAthletes[athlete] = false;
     });
+  }
+
+ 
+  void _showAthleteCheckInDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AthleteCheckInScreen(
+          onConfirm: (selectedAthletes) {
+            setState(() {
+              for (var athlete in selectedAthletes) {
+                if (!_selectedAthletes.containsKey(athlete)) {
+                  _selectedAthletes[athlete] = false;
+                  _lapsPerAthlete[athlete] = [];
+                }
+              }
+            });
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -194,7 +233,7 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        for (var athlete in widget.athletesWithCheckIn)
+                        for (var athlete in _selectedAthletes.keys)
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -204,45 +243,52 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                               border: Border.all(color: Colors.red, width: 2),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Checkbox(
-                                  value: _selectedAthletes[athlete],
-                                  onChanged: (bool? value) {
-                                    setState(() {
-                                      _selectedAthletes[athlete] = value ?? false;
-                                    });
-                                  },
-                                  activeColor: Colors.green,
-                                ),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () => _markTimeForAthlete(athlete),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          athlete,
-                                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                                        ),
-                                        ...?_lapsPerAthlete[athlete]?.asMap().entries.map((entry) {
-                                          int lapNumber = entry.key + 1;
-                                          String lapTime = entry.value;
-                                          return Text(
-                                            'Lap $lapNumber: $lapTime',
-                                            style: const TextStyle(fontSize: 14),
-                                          );
-                                        }),
-                                      ],
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Checkbox(
+                                      value: _selectedAthletes[athlete],
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          _selectedAthletes[athlete] = value ?? false;
+                                        });
+                                      },
+                                      activeColor: Colors.green,
                                     ),
-                                  ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () => _markTimeForAthlete(athlete),
+                                        child: Text(
+                                          athlete,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.grey),
+                                      onPressed: () => _removeLapsForAthlete(athlete),
+                                    ),
+                                  ],
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.grey),
-                                  onPressed: () => _removeLapsForAthlete(athlete),
-                                ),
+                                const SizedBox(height: 8),
+                                // Lista de voltas do atleta
+                                ...?_lapsPerAthlete[athlete]?.asMap().entries.map((entry) {
+                                  int lapNumber = entry.key + 1;
+                                  String lapTime = entry.value;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 32.0),
+                                    child: Text(
+                                      'Lap $lapNumber: $lapTime',
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  );
+                                }),
                               ],
                             ),
                           ),

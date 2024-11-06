@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'Stopwatch_screen.dart';
 
 class StopwatchTrainingTypeScreen extends StatefulWidget {
-  final String lapTime;
-  final List<String> athletes;
+  final Map<String, List<String>> lapsPerAthlete;
 
   const StopwatchTrainingTypeScreen({
     super.key,
-    required this.lapTime,
-    required this.athletes,
+    required this.lapsPerAthlete,
   });
 
   @override
@@ -35,8 +33,11 @@ class _StopwatchTrainingTypeScreenState
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-              builder: (context) =>
-                  StopwatchScreen(athletesWithCheckIn: [])), // Lista vazia
+            builder: (context) => StopwatchScreen(
+              athletesWithCheckIn: widget.lapsPerAthlete.keys.toList(),
+              lapsPerAthlete: widget.lapsPerAthlete,
+            ),
+          ),
           (Route<dynamic> route) => false,
         );
       });
@@ -69,17 +70,6 @@ class _StopwatchTrainingTypeScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 40),
-              child: Text(
-                widget.lapTime,
-                style: const TextStyle(
-                  fontSize: 48,
-                  color: Colors.red,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -134,17 +124,23 @@ class _StopwatchTrainingTypeScreenState
             const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
-                itemCount: widget.athletes.length,
+                itemCount: widget.lapsPerAthlete.keys.length,
                 itemBuilder: (context, index) {
-                  final athlete = widget.athletes[index];
+                  final athlete = widget.lapsPerAthlete.keys.elementAt(index);
                   return ListTile(
                     title: Text(
                       athlete,
                       style: const TextStyle(fontSize: 18),
                     ),
-                    subtitle: Text(
-                      'Lap Time: ${widget.lapTime}',
-                      style: const TextStyle(color: Colors.grey),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (int i = 0; i < widget.lapsPerAthlete[athlete]!.length; i++)
+                          Text(
+                            'Lap ${i + 1}: ${widget.lapsPerAthlete[athlete]![i]}',
+                            style: const TextStyle(color: Colors.grey),
+                          ),
+                      ],
                     ),
                   );
                 },
