@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'stopwatch_training_type.dart';
 import '../widgets/base_screen.dart';
 import 'athlete_check_in_screen.dart';
@@ -29,11 +31,12 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
   late Map<String, List<String>> _lapsPerAthlete;
   Map<String, bool> _athleteChecked = {};
   Map<String, bool> _selectedAthletes = {};
+  String _searchQuery = "";
+  List<String> _allAthletes = [];
 
   @override
   void initState() {
     super.initState();
-    // Inicializa os atletas
     _lapsPerAthlete = Map<String, List<String>>.from(widget.lapsPerAthlete);
     for (var athlete in widget.athletesWithCheckIn) {
       _athleteChecked[athlete] = false;
@@ -41,14 +44,31 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
       _selectedAthletes[athlete] = false;
     }
 
-    // Se deve mostrar o popup de seleção de atletas
     if (widget.showAthleteCheckInPopup) {
-      // Adiciona um pequeno atraso antes de chamar o popup para garantir que a UI esteja pronta
       WidgetsBinding.instance.addPostFrameCallback((_) {
         Future.delayed(const Duration(milliseconds: 500), () {
           _showAthleteCheckInDialog();
         });
       });
+    }
+  }
+
+  Future<void> _fetchAthletes() async {
+    try {
+      final response = await http.get(Uri.parse('http://localhost:3000/api/athletes'));
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _allAthletes = data.map((athlete) => athlete['name'].toString()).toList();
+        });
+      } else {
+        throw Exception('Failed to load athletes');
+      }
+    } catch (e) {
+      print('Error fetching athletes: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Error loading athletes")),
+      );
     }
   }
 
@@ -70,18 +90,47 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
     });
   }
 
-  void _resetTimer() {
+  void _resetAll() {
     setState(() {
       _timer?.cancel();
       _milliseconds = 0;
       _isRunning = false;
       _progressValue = 0.0;
       _athleteLapTimes.clear();
+
       for (var athlete in _athleteChecked.keys) {
         _athleteChecked[athlete] = false;
         _lapsPerAthlete[athlete]?.clear();
         _selectedAthletes[athlete] = false;
       }
+    });
+  }
+
+  void _selectAllAthletes() {
+    setState(() {
+      for (var athlete in _selectedAthletes.keys) {
+        _selectedAthletes[athlete] = true;
+      }
+    });
+  }
+
+  void _deleteSelectedAthletes() {
+    setState(() {
+      // Remove apenas os atletas selecionados e limpa os laps deles
+      _selectedAthletes.forEach((athlete, isSelected) {
+        if (isSelected) {
+          _lapsPerAthlete[athlete]?.clear();
+        }
+      });
+      _selectedAthletes.removeWhere((athlete, isSelected) => isSelected);
+      _resetAll(); // Zera o cronômetro ao deletar os selecionados
+    });
+  }
+
+  void _deleteSingleAthlete(String athlete) {
+    setState(() {
+      _selectedAthletes.remove(athlete);
+      _lapsPerAthlete.remove(athlete);
     });
   }
 
@@ -91,65 +140,115 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
     final int minutes = (milliseconds ~/ 60000) % 60;
     final int hours = milliseconds ~/ 3600000;
 
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${centiseconds.toString().padLeft(2, '0')}';
-  }
-
-  void _markTimeForAthlete(String athlete) {
-    final formattedTime = _formatTime(_milliseconds);
-    setState(() {
-      _athleteLapTimes[athlete] = formattedTime;
-      _athleteChecked[athlete] = true;
-      _lapsPerAthlete[athlete]?.add(formattedTime);
-    });
-  }
-
-  void _navigateToTrainingType() {
-    List<String> selectedAthletes = _selectedAthletes.entries
-        .where((entry) => entry.value)
-        .map((entry) => entry.key)
-        .toList();
-
-    if (selectedAthletes.isNotEmpty) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => StopwatchTrainingTypeScreen(
-            lapsPerAthlete: _lapsPerAthlete,
-          ),
-        ),
-      );
+    if (hours > 0) {
+      return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${centiseconds.toString().padLeft(2, '0')}';
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select at least one athlete")),
-      );
+      return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}:${centiseconds.toString().padLeft(2, '0')}';
     }
   }
 
-  void _removeLapsForAthlete(String athlete) {
-    setState(() {
-      _lapsPerAthlete[athlete]?.clear();
-      _athleteChecked[athlete] = false;
-      _selectedAthletes[athlete] = false;
-    });
-  }
-
- 
-  void _showAthleteCheckInDialog() {
-    showDialog(
+  void _showAthleteCheckInDialog() async {
+    await _fetchAthletes();
+    showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0),
+        ),
+      ),
       builder: (context) {
-        return AthleteCheckInScreen(
-          onConfirm: (selectedAthletes) {
-            setState(() {
-              for (var athlete in selectedAthletes) {
-                if (!_selectedAthletes.containsKey(athlete)) {
-                  _selectedAthletes[athlete] = false;
-                  _lapsPerAthlete[athlete] = [];
-                }
-              }
-            });
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.5,
+          minChildSize: 0.25,
+          maxChildSize: 0.7,
+          builder: (context, scrollController) {
+            return Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _searchQuery = value.toLowerCase();
+                      });
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Search Athletes',
+                      prefixIcon: Icon(Icons.search),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  Expanded(
+                    child: ListView(
+                      controller: scrollController,
+                      children: _allAthletes
+                          .where((athlete) => athlete.toLowerCase().contains(_searchQuery))
+                          .map((athlete) => GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedAthletes[athlete] = !(_selectedAthletes[athlete] ?? false);
+                                  });
+                                },
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 70, // Definindo altura dos itens para 60-70 pixels
+                                  margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: _selectedAthletes[athlete] == true
+                                        ? Border.all(color: Colors.green, width: 2)
+                                        : Border.all(color: Colors.transparent, width: 2),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        athlete,
+                                        style: const TextStyle(fontSize: 18),
+                                      ),
+                                      Icon(
+                                        _selectedAthletes[athlete] == true
+                                            ? Icons.check_circle
+                                            : Icons.circle_outlined,
+                                        color: _selectedAthletes[athlete] == true
+                                            ? Colors.green
+                                            : Colors.grey,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Confirm All Athletes'),
+                  ),
+                ],
+              ),
+            );
           },
         );
       },
+    );
+  }
+
+  void _recordLapForAthlete(String athlete) {
+    final lapTime = _formatTime(_milliseconds);
+    setState(() {
+      _lapsPerAthlete[athlete]?.add(lapTime);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Lap recorded for $athlete: $lapTime')),
     );
   }
 
@@ -191,33 +290,52 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                         color: Colors.red,
                       ),
                     ),
-                    Text(
-                      _formatTime(_milliseconds),
-                      style: TextStyle(
-                        fontSize: rectangleHeight * 0.4,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _formatTime(_milliseconds),
+                        style: TextStyle(
+                          fontSize: rectangleHeight * 0.4,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-                Container(
-                  width: screenWidth * 0.6,
-                  padding: const EdgeInsets.all(8.0),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Laps',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.check_box, size: 30, color: Colors.black),
+                      onPressed: _selectAllAthletes,
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      width: 120,
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextButton(
+                        onPressed: _startStopTimer,
+                        child: Text(
+                          _isRunning ? 'Stop' : 'Start',
+                          style: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(Icons.delete, size: 30, color: Colors.black),
+                      onPressed: _deleteSelectedAthletes,
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 20),
                 Container(
@@ -234,33 +352,35 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         for (var athlete in _selectedAthletes.keys)
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 6),
-                            margin: const EdgeInsets.only(bottom: 8),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.red, width: 2),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Checkbox(
-                                      value: _selectedAthletes[athlete],
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          _selectedAthletes[athlete] = value ?? false;
-                                        });
-                                      },
-                                      activeColor: Colors.green,
-                                    ),
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () => _markTimeForAthlete(athlete),
+                          GestureDetector(
+                            onTap: () => _recordLapForAthlete(athlete),
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 4, horizontal: 6),
+                              margin: const EdgeInsets.only(bottom: 8),
+                              decoration: BoxDecoration(
+                                border: _selectedAthletes[athlete] == true
+                                    ? Border.all(color: Colors.green, width: 2)
+                                    : Border.all(color: Colors.red, width: 2),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Checkbox(
+                                        value: _selectedAthletes[athlete],
+                                        onChanged: (bool? value) {
+                                          setState(() {
+                                            _selectedAthletes[athlete] = value ?? false;
+                                          });
+                                        },
+                                        activeColor: Colors.green,
+                                      ),
+                                      Expanded(
                                         child: Text(
                                           athlete,
                                           style: const TextStyle(
@@ -269,55 +389,52 @@ class _StopwatchScreenState extends State<StopwatchScreen> {
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete, color: Colors.grey),
-                                      onPressed: () => _removeLapsForAthlete(athlete),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                // Lista de voltas do atleta
-                                ...?_lapsPerAthlete[athlete]?.asMap().entries.map((entry) {
-                                  int lapNumber = entry.key + 1;
-                                  String lapTime = entry.value;
-                                  return Padding(
-                                    padding: const EdgeInsets.only(left: 32.0),
-                                    child: Text(
-                                      'Lap $lapNumber: $lapTime',
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  );
-                                }),
-                              ],
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.delete,
+                                          size: 24,
+                                          color: _selectedAthletes[athlete] == true ? Colors.green : Colors.red,
+                                        ),
+                                        onPressed: () => _deleteSingleAthlete(athlete),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  if (_lapsPerAthlete[athlete] != null)
+                                    for (int i = 0; i < _lapsPerAthlete[athlete]!.length; i++)
+                                      Text(
+                                        'Lap ${i + 1}: ${_lapsPerAthlete[athlete]![i]}',
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                ],
+                              ),
                             ),
                           ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.check_circle, size: 40, color: Colors.blue),
-                      onPressed: _navigateToTrainingType,
-                    ),
-                    FloatingActionButton(
-                      onPressed: _startStopTimer,
-                      backgroundColor: Colors.red,
-                      child: Icon(
-                        _isRunning ? Icons.pause : Icons.play_arrow,
-                        size: 30,
-                        color: Colors.black,
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, size: 40, color: Colors.black),
-                      onPressed: _resetTimer,
-                    ),
-                  ],
+                const SizedBox(height: 20),
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.check, size: 30, color: Colors.white),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StopwatchTrainingTypeScreen(
+                            lapsPerAthlete: _lapsPerAthlete,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),
