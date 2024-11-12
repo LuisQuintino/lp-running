@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'stopwatch_screen.dart';
-import '../widgets/base_screen.dart';
 
 class AthleteCheckInScreen extends StatefulWidget {
-  const AthleteCheckInScreen({super.key});
+  final void Function(List<String>) onConfirm;
+
+  const AthleteCheckInScreen({Key? key, required this.onConfirm}) : super(key: key);
 
   @override
   _AthleteCheckInScreenState createState() => _AthleteCheckInScreenState();
@@ -13,14 +13,14 @@ class AthleteCheckInScreen extends StatefulWidget {
 
 class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
   String _searchQuery = "";
-  List<String> _checkedInAthletes = []; 
+  List<String> _checkedInAthletes = [];
   List<String> _filteredAthletes = [];
-  List<String> _confirmedAthletes = []; 
+  List<String> _confirmedAthletes = [];
 
   @override
   void initState() {
     super.initState();
-    _fetchAthletes(); 
+    _fetchAthletes();
   }
 
   Future<void> _fetchAthletes() async {
@@ -38,7 +38,7 @@ class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
     } catch (error) {
       print('Error fetching athletes: $error');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error loading athletes")),
+        const SnackBar(content: Text("Error loading athletes")),
       );
     }
   }
@@ -55,60 +55,57 @@ class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
   void _confirmCheckIn(String athleteName) {
     setState(() {
       if (!_confirmedAthletes.contains(athleteName)) {
-        _confirmedAthletes.add(athleteName); 
+        _confirmedAthletes.add(athleteName);
       }
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Check-in confirmed for $athleteName")),
-    );
-  }
-
-  void _confirmAllAndNavigate() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => StopwatchScreen(
-          athletesWithCheckIn: _confirmedAthletes,
-        ),
-      ),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BaseScreen(
-      currentIndex: 2,
-      pageTitle: 'Athletes Check-In',
-      child: Padding(
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
+      child: Container(
         padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.0),
+        ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               decoration: InputDecoration(
                 labelText: 'Search Athlete',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                prefixIcon: const Icon(Icons.search),
               ),
               onChanged: _filterAthletes,
             ),
-            const SizedBox(height: 20),
-            Expanded(
-              child: _filteredAthletes.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No athletes found.",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    )
-                  : ListView.builder(
+            const SizedBox(height: 16),
+            _filteredAthletes.isEmpty
+                ? const Center(
+                    child: Text(
+                      "No athletes found.",
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  )
+                : Expanded(
+                    child: ListView.builder(
+                      shrinkWrap: true,
                       itemCount: _filteredAthletes.length,
                       itemBuilder: (context, index) {
                         final athlete = _filteredAthletes[index];
                         final isConfirmed = _confirmedAthletes.contains(athlete);
                         return ListTile(
-                          title: Text(athlete),
+                          title: Text(
+                            athlete,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           trailing: Icon(
-                            isConfirmed ? Icons.check_circle : Icons.check_circle_outline,
-                            color: isConfirmed ? Colors.green : null,
+                            isConfirmed ? Icons.check_circle : Icons.circle_outlined,
+                            color: isConfirmed ? Colors.green : Colors.grey,
                           ),
                           onTap: () {
                             _confirmCheckIn(athlete);
@@ -116,18 +113,23 @@ class _AthleteCheckInScreenState extends State<AthleteCheckInScreen> {
                         );
                       },
                     ),
-            ),
-            const SizedBox(height: 20),
+                  ),
+            const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _confirmedAthletes.isEmpty ? null : _confirmAllAndNavigate,
+                onPressed: _confirmedAthletes.isEmpty
+                    ? null
+                    : () {
+                        widget.onConfirm(_confirmedAthletes);
+                        Navigator.of(context).pop();
+                      },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(16.0),
                   ),
                 ),
                 child: const Text(

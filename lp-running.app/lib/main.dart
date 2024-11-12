@@ -24,13 +24,17 @@ class MyApp extends StatelessWidget {
         '/splash': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const HomeScreen(),
-        '/stopwatch': (context) => StopwatchScreen(athletesWithCheckIn: []), 
+        '/stopwatch': (context) => StopwatchScreen(athletesWithCheckIn: []),
         '/athletes': (context) => const AthletesScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/coaches': (context) => const CoachListScreen(),
         '/training-types': (context) => const TrainingTypesScreen(),
         '/master-control': (context) => const MasterControlScreen(),
-        '/athlete-check-in': (context) => const AthleteCheckInScreen(),
+        '/athlete-check-in': (context) => AthleteCheckInScreen(
+              onConfirm: (selectedAthletes) {
+                // Definir o que fazer ao confirmar os atletas selecionados
+              },
+            ),
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (context) => const HomeScreen());
