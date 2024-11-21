@@ -5,7 +5,7 @@ const Coach = require('../Models/Coach');
 exports.getAllCoaches = async (req, res) => {
   try {
     const coaches = await Coach.findAll({
-      attributes: ['id', 'name', 'email', 'phone', 'role', 'active'] 
+      attributes: ['id', 'name', 'email', 'phone', 'role','cpf','dob', 'admin'] 
     });
     res.status(200).json(coaches);
   } catch (error) {
@@ -18,13 +18,13 @@ exports.getAllCoaches = async (req, res) => {
 exports.getCoachesData = async (req, res) => {
   try {
     const coaches = await Coach.findAll({
-      attributes: ['name', 'cpf', 'role', 'active']
+      attributes: ['name', 'cpf', 'role', 'admin']
     });
 
     const coachesData = coaches.map(coach => ({
       name: coach.name,
       cpf: coach.cpf,
-      accountType: coach.role === 'Admin' ? 'Admin' : coach.role, 
+      accountType: coach.admin ? 'Admin' : coach.role, 
       status: coach.active ? 'Ativo' : 'Desativado'
     }));
 

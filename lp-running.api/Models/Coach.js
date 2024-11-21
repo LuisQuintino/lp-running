@@ -29,13 +29,13 @@ const Coach = sequelize.define('Coach', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  active: {
+  admin: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
 }, {
   tableName: 'coaches',
-  timestamps: true,
+  timestamps: false,
   indexes: [
     {
       unique: true,
