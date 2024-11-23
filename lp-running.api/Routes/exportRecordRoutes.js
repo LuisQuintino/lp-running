@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const Record = require('../Models/Record'); // Ajuste o caminho conforme necessário
-const Athlete = require('../Models/Athlete'); // Ajuste o caminho conforme a estrutura do seu projeto
-
+const ExportRecord = require('../Models/exportRecord'); // Ajuste o caminho conforme necessário
+const Athlete = require('../Models/Athlete'); // Ajuste o caminho conforme necessário
 
 // Rota para exportar registros
 router.get('/export', async (req, res) => {
     try {
-        const records = await Record.findAll({
+        const records = await ExportRecord.findAll({
             include: [{
-                model: Aluno, // Inclua o modelo que você deseja
+                model: Athlete, // Verifique se é o modelo correto
                 attributes: ['email', 'age', 'weight', 'height'], // Os atributos que você quer retornar
             }]
         });
