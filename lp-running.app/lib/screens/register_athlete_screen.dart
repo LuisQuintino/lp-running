@@ -117,23 +117,62 @@ class _RegisterAthleteScreenState extends State<RegisterAthleteScreen> {
     }
   }
 
-  void _registerAthlete() {
-    if (_nameController.text.isNotEmpty && _cpfController.text.isNotEmpty) {
-      widget.onRegisterAthlete(_nameController.text, _imageUrl ?? '');
+  void _registerAthlete() async {
+  if (_nameController.text.isEmpty || _cpfController.text.isEmpty || _emailController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Preencha todos os campos obrigatórios (nome, CPF e email).'),
+      ),
+    );
+    return;
+  }
+
+  final athleteData = {
+    "name": _nameController.text,
+    "email": _emailController.text,
+    "cpf": _cpfController.text,
+    "dob": _dobController.text.isNotEmpty
+        ? _dobController.text.split('/').reversed.join('-') // Converte para formato ISO
+        : null,
+    "observations": _observationsController.text,
+    "imageUrl": _imageUrl, // Substituir por URL real após upload
+    "gender": _selectedGender,
+    "coach": _selectedCoach,
+    "active": true,
+  };
+
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/api/athletes'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(athleteData),
+    );
+
+    if (response.statusCode == 201) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Registration Completed'),
+          content: Text('Atleta registrado com sucesso!'),
         ),
       );
       Navigator.of(context).pop();
     } else {
+      print('Erro ao registrar atleta: ${response.body}');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter a valid name and CPF.'),
+          content: Text('Erro ao registrar atleta. Verifique os dados e tente novamente.'),
         ),
       );
     }
+  } catch (error) {
+    print('Erro na requisição: $error');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Erro ao conectar com o servidor. Verifique a conexão.'),
+      ),
+    );
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
