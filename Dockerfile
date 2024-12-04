@@ -7,7 +7,7 @@ FROM node:${NODE_VERSION}-slim as base
 LABEL fly_launch_runtime="Node.js"
 
 # Node.js app lives here
-WORKDIR /lp-running.api
+WORKDIR ./lp-running.api
 
 # Set production environment
 ENV NODE_ENV="development"
