@@ -21,6 +21,7 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY package-lock.json package.json /lp-running.api
+RUN npm express jsonwebtoken body-paser cors dotenv mysql2 mssql nodemailer sequelize tedious bcrypt bcryptjs
 RUN npm ci
 
 # Copy application code
