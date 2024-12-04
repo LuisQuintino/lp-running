@@ -15,6 +15,7 @@
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.21.1",
+        "lp-running.api": "file:",
         "mongoose": "^8.7.2",
         "mssql": "^11.0.1",
         "mysql2": "^3.11.3",

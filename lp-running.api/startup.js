@@ -3,9 +3,9 @@ const cors = require('cors');
 const app = express();
 const sequelize = require('./ApiConfig/db');
 const bcrypt = require('bcryptjs');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
-
+// Importação das rotas e controllers com os novos nomes
 const coachRoutes = require('./Routes/coachRoutes');
 const registerAthleteRoutes = require('./Routes/registerAthleteRoutes');
 const athleteRoutes = require('./Routes/athleteRoutes');
@@ -13,8 +13,9 @@ const registerCoachRoutes = require('./Routes/registerCoachRoutes');
 const authRoutes = require('./Routes/authRoutes');
 const metricasRoutes = require('./Routes/metricasRoutes');
 const resetTokenRoutes = require('./Routes/resetTokenRoutes');
-const coachController = require('./Controller/CoachController');
-const recordRoutes = require('./Routes/recordRoutes')
+const exportDataController = require('./Controller/export_DataController'); // Nome atualizado
+const exportRecordRoutes = require('./Routes/exportRecordRoutes'); // Nome atualizado
+
 
 app.use(cors());
 app.use(express.json());
@@ -26,19 +27,19 @@ app.use((req, res, next) => {
 });
 
 sequelize.authenticate()
-    .then(() => {
-        console.log('Conexão bem-sucedida com o banco de dados SQL Server');
-    })
-    .catch(err => {
-        console.error('Erro ao conectar ao banco de dados:', err);
-    });
+  .then(() => {
+    console.log('Conexão bem-sucedida com o banco de dados SQL Server');
+  })
+  .catch(err => {
+    console.error('Erro ao conectar ao banco de dados:', err);
+  });
 
-// Usando as rotas
-app.use('/api/record', recordRoutes);
+// Usando as rotas com os novos nomes
+app.use('/api/record', exportRecordRoutes); // Nome atualizado
 app.use('/api/coaches', coachRoutes);
-app.get('/api/coaches/data', coachController.getCoachesData);
-app.put('/api/coaches/:id/status', coachController.toggleCoachStatus);
-app.put('/api/coaches/:id/archive', coachController.archiveCoach);
+app.get('/api/coaches/data', exportDataController.getCoachesData); // Nome atualizado
+app.put('/api/coaches/:id/status', exportDataController.toggleCoachStatus); // Nome atualizado
+app.put('/api/coaches/:id/archive', exportDataController.archiveCoach); // Nome atualizado
 
 app.use('/api/athletes/register', registerAthleteRoutes);
 app.use('/api/athletes', athleteRoutes);
