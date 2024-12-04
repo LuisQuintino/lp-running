@@ -32,7 +32,7 @@ COPY . .
 FROM base
 
 # Copy built application
-COPY --from=build /lp-running.api /lp-running.api
+COPY --from=build /lp-running.api /
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
