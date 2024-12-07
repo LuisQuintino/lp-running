@@ -51,12 +51,6 @@ Requisitos e especificações com prints das telas do APP podem ser encontrados 
 
 ---
 
-## Vídeo de Demonstração 
-Link para assistir ao vídeo de demonstração (máximo 3 minutos).
-A gravação apresenta a navegação pelas telas principais e uma explicação sobre as funcionalidades implementadas.  
-
----
-
 ## Links do Confluence e Jira  
 - **Confluence**: https://lprunning.atlassian.net/wiki/spaces/PDM/overview
 - **Jira**: https://lprunning.atlassian.net/jira
