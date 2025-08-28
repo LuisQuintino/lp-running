@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
 # Adjust NODE_VERSION as desired
-ARG NODE_VERSION=20.18.0
+ARG NODE_VERSION=22.11.0
 FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Node.js"
@@ -12,7 +12,6 @@ WORKDIR /lp-running.api
 # Set production environment
 ENV NODE_ENV="development"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -21,13 +20,12 @@ RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
 # Install node modules
-COPY package-lock.json package.json ./
+COPY package-lock.json package.json /lp-running.api
+RUN npm install express jsonwebtoken body-parser cors dotenv mysql2 mssql nodemailer sequelize tedious bcrypt bcryptjs
 RUN npm ci
-RUN npm i
 
 # Copy application code
 COPY . .
-
 
 # Final stage for app image
 FROM base
